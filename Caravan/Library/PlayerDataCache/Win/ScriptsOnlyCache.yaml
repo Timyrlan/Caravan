@@ -28,6 +28,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 48
       Script: {instanceID: 0}
+    - Class: 58
+      Script: {instanceID: 0}
     - Class: 81
       Script: {instanceID: 0}
     - Class: 104
@@ -524,4 +526,4 @@ ScriptsOnlyBuild:
   platform: 5
   scenePathNames:
   - Assets/Scenes/SampleScene.unity
-  playerPath: C:/Projects/Unity/Projects/Caravan/Caravan/Build/Caravan.exe
+  playerPath: C:/Projects/Unity/Projects/Caravan2/Caravan/Build/Caravan.exe
