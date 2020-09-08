@@ -15,8 +15,9 @@ public class CityController : MonoBehaviour
     public float X { get; set; }
     public float Y { get; set; }
     public string Name { get; set; }
+    public bool Visible { get; private set; }
 
-    public void Initialize(InitializeCity initializeCity)
+    public void Initialize(InitializeCity initializeCity, bool visible = false)
     {
         Name = initializeCity.Name;
         Size = initializeCity.Size;
@@ -24,10 +25,18 @@ public class CityController : MonoBehaviour
         Y = transform.position.y;
         var caption = transform.Find("Caption");
         caption.gameObject.GetComponent<TextMesh>().text = Name;
+        Visible = visible;
+        gameObject.SetActive(Visible);
+
+
 
         ChangeSize();
+    }
 
-
+    public void SetVisible()
+    {
+        Visible = true;
+        gameObject.SetActive(Visible);
     }
 
     // Start is called before the first frame update

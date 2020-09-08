@@ -91,7 +91,6 @@ public class WorldController : MonoBehaviour
         {
             var initializeCity = GetRandomInitializeCity();
             
-
             var vector = GenerateInitializedCityVectorInScreenXN(i<5?1:3, initializeCity.Size,0);
             
             if (vector == null)
@@ -101,10 +100,23 @@ public class WorldController : MonoBehaviour
             }
 
             var city = Instantiate(CityControllerBase, (Vector3)vector, Quaternion.identity);
-            city.Initialize(initializeCity);
+
+            var cityVisible = i == 0;
+            city.Initialize(initializeCity, cityVisible);
             Cities.Add(city);
             Debug.Log($"Created {city.Name} with X={city.X} and Y={city.Y} and size={city.Size}");
         }       
+    }
+
+    private void UpdateVisibleCities()
+    {
+        foreach (var city in Cities.Where(c=>!c.Visible))
+        {
+            if (Mathf.Abs(city.X - PlayerController.transform.position.x) < (1+city.Size/2) && Mathf.Abs(city.Y - PlayerController.transform.position.y) < (1 + city.Size/2))
+            {
+                city.SetVisible();
+            }
+        }
     }
 
     private void InitializePlayer()
@@ -125,6 +137,7 @@ public class WorldController : MonoBehaviour
             MovePlayer = new MovePlayer(PlayerController.transform.position, Camera.main.ScreenToWorldPoint(Input.mousePosition));
             //PlayerController.LastCity = FindCurrentCity();
         }
+        
 
         if (MovePlayer != null)
         {
@@ -140,6 +153,8 @@ public class WorldController : MonoBehaviour
                 {
                     LeaveCity(PlayerController.CityEntered);
                 }
+
+                UpdateVisibleCities();
             }
             else
             {
@@ -202,5 +217,5 @@ public class InitializeCity
 {
     public string Name { get; set; }
 
-    public float Size { get; set; }
+    public float Size { get; set; }    
 }
