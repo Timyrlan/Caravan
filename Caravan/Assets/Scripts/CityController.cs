@@ -1,9 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using UnityEngine;
 
 public class CityController : MonoBehaviour
 {
+    [SerializeField]
+    private Canvas Canvas;
+
     [SerializeField]
     public WorldController WorldController;
 
@@ -18,6 +22,12 @@ public class CityController : MonoBehaviour
         Size = initializeCity.Size;
         X = transform.position.x;
         Y = transform.position.y;
+        var caption = transform.Find("Caption");
+        caption.gameObject.GetComponent<TextMesh>().text = Name;
+
+        ChangeSize();
+
+
     }
 
     // Start is called before the first frame update
@@ -29,6 +39,13 @@ public class CityController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.localScale = new Vector3(Size, Size, 1);
+        
+    }
+
+    private void ChangeSize()
+    {
+        transform.Find("Scalable").transform.localScale = new Vector3(Size, Size, 1);
+        var caption = transform.Find("Caption").gameObject;
+        caption.transform.position = new Vector3(transform.position.x- Name.Length*0.05f, transform.position.y-Size/2-0.05f, 0);        
     }
 }

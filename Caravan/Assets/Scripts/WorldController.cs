@@ -7,6 +7,10 @@ using System.Linq;
 
 public class WorldController : MonoBehaviour
 {
+    
+    [SerializeField]
+    private Canvas Canvas;
+
     [SerializeField]
     private DesertController DesertController;
 
@@ -22,7 +26,9 @@ public class WorldController : MonoBehaviour
     public const float CameraWidth = 20;
     public const float CameraHeight = 10;
     public const float CameraBorder = 2;
-    
+    public const float CityUnDensity = 2;
+
+
     public const float CoordinateAccuracy = 0.01f;
 
     public const int InitializeCityCount = 10;
@@ -50,16 +56,21 @@ public class WorldController : MonoBehaviour
         InitializePlayer();
     }
 
-    private Vector3 GenerateInitializedCityVectorInScreenXN(int n, float size)
+    private Vector3? GenerateInitializedCityVectorInScreenXN(int n, float size, int deep)
     {
+        if(deep>=20)
+        {
+            return null;
+        }
+
         var cityX = Random.Range(-CameraWidth * n / 2 + CameraBorder, CameraWidth * n / 2 - CameraBorder);
         var cityY = Random.Range(-CameraHeight * n / 2 + CameraBorder, CameraHeight * n / 2 - CameraBorder);
 
         foreach (var city in Cities)
         {
-            if (Mathf.Abs(city.X - cityX) < (city.Size+ size) * 3 && Mathf.Abs(city.Y - cityY) < (city.Size + size))
+            if (Mathf.Abs(city.X - cityX) < (city.Size+ size) * CityUnDensity && Mathf.Abs(city.Y - cityY) < (city.Size + size) * CityUnDensity)
             {
-                return GenerateInitializedCityVectorInScreenXN(n, size);
+                return GenerateInitializedCityVectorInScreenXN(n, size, deep+1);
             }
         }
 
@@ -79,8 +90,17 @@ public class WorldController : MonoBehaviour
         for(var i = 0; i< InitializeCityCount; i++)
         {
             var initializeCity = GetRandomInitializeCity();
-            var vector = GenerateInitializedCityVectorInScreenXN(i<3?1:3, initializeCity.Size);            
-            var city = Instantiate(CityControllerBase, vector, Quaternion.identity);
+            
+
+            var vector = GenerateInitializedCityVectorInScreenXN(i<5?1:3, initializeCity.Size,0);
+            
+            if (vector == null)
+            {
+                Debug.Log($"Couldn't create cities on iteration {i}");
+                return;
+            }
+
+            var city = Instantiate(CityControllerBase, (Vector3)vector, Quaternion.identity);
             city.Initialize(initializeCity);
             Cities.Add(city);
             Debug.Log($"Created {city.Name} with X={city.X} and Y={city.Y} and size={city.Size}");
@@ -97,8 +117,7 @@ public class WorldController : MonoBehaviour
         
         PlayerController.InitializePlayer();
     }
-
-    // Update is called once per frame
+    
     void Update()
     {
         if (Input.GetButtonDown("Fire1"))
