@@ -9,8 +9,6 @@ public class PlayerController : MonoBehaviour
 
     public CityController CityEntered { get; set; }
 
-    public bool CityLeaved { get; set; }
-
     private bool Initialized { get; set; }
 
     public void InitializePlayer()

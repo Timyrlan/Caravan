@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Runtime.InteropServices;
 using UnityEngine;
+using System.Linq;
 
 public class WorldController : MonoBehaviour
 {
@@ -9,13 +11,13 @@ public class WorldController : MonoBehaviour
     private DesertController DesertController;
 
     [SerializeField]
-    private PlayerController PlayerControllerBase;
+    public PlayerController PlayerControllerBase;
 
     [SerializeField]
-    private PlayerController PlayerController;
+    private PlayerController PlayerController; 
 
     [SerializeField]
-    private CityController CityControllerBase;
+    public CityController CityControllerBase;
 
     public const float CameraWidth = 20;
     public const float CameraHeight = 10;
@@ -23,25 +25,76 @@ public class WorldController : MonoBehaviour
     
     public const float CoordinateAccuracy = 0.01f;
 
+    public const int InitializeCityCount = 10;
+
     private List<CityController> Cities { get; set; } = new List<CityController>();
+
+    private InitializeCity[] InitializeCitiesArray = new InitializeCity[] {
+        new InitializeCity{ Name = "Moscow", Size = 1},
+        new InitializeCity{ Name = "St.Petersburg", Size = 0.7f},
+        new InitializeCity{ Name = "Chita", Size = 0.5f},
+        new InitializeCity{ Name = "Voronezh", Size = 0.5f},
+        new InitializeCity{ Name = "Kaluga", Size = 0.5f},
+        new InitializeCity{ Name = "Ufa", Size = 0.3f},
+        new InitializeCity{ Name = "Novgorod", Size = 0.5f},
+        new InitializeCity{ Name = "Zelenograd", Size = 0.3f},
+        new InitializeCity{ Name = "Izhevsk", Size = 0.7f},
+        new InitializeCity{ Name = "Perm", Size = 1.1f},
+    };        
 
     private MovePlayer MovePlayer { get; set; }    
 
-    // Start is called before the first frame update
     void Start()
     {
-        var firstCityX = Random.Range(-CameraWidth / 2 + CameraBorder, CameraWidth / 2 - CameraBorder);
-        var firstCityY = Random.Range(-CameraHeight / 2 + CameraBorder, CameraHeight / 2 - CameraBorder);
-        //Debug.Log($"Creating first city with firstCityX={firstCityX} and firstCityY={firstCityY}");
-        var firstCity = Instantiate(CityControllerBase, new Vector3(firstCityX, firstCityY, 0), Quaternion.identity);
-        firstCity.X = firstCityX;
-        firstCity.Y = firstCityY;
-        firstCity.Name = "Moscow";
-        Cities.Add(firstCity);
+        InitializeCities();
+        InitializePlayer();
+    }
 
-        //Debug.Log($"Creating player with firstCityX={firstCityX} and firstCityY={firstCityY}");
-        PlayerController = Instantiate(PlayerControllerBase, new Vector3(firstCityX, firstCityY, 0), Quaternion.identity);
+    private Vector3 GenerateInitializedCityVectorInScreenXN(int n, float size)
+    {
+        var cityX = Random.Range(-CameraWidth * n / 2 + CameraBorder, CameraWidth * n / 2 - CameraBorder);
+        var cityY = Random.Range(-CameraHeight * n / 2 + CameraBorder, CameraHeight * n / 2 - CameraBorder);
 
+        foreach (var city in Cities)
+        {
+            if (Mathf.Abs(city.X - cityX) < (city.Size+ size) * 3 && Mathf.Abs(city.Y - cityY) < (city.Size + size))
+            {
+                return GenerateInitializedCityVectorInScreenXN(n, size);
+            }
+        }
+
+        return new Vector3(cityX, cityY, 0);
+    }
+
+    private InitializeCity GetRandomInitializeCity()
+    {
+        var random = Random.Range(0, InitializeCitiesArray.Length);
+        var result = InitializeCitiesArray[random];
+        InitializeCitiesArray = InitializeCitiesArray.Where(c => c.Name != result.Name).ToArray();
+        return result;
+    }
+
+    private void InitializeCities()
+    {
+        for(var i = 0; i< InitializeCityCount; i++)
+        {
+            var initializeCity = GetRandomInitializeCity();
+            var vector = GenerateInitializedCityVectorInScreenXN(i<3?1:3, initializeCity.Size);            
+            var city = Instantiate(CityControllerBase, vector, Quaternion.identity);
+            city.Initialize(initializeCity);
+            Cities.Add(city);
+            Debug.Log($"Created {city.Name} with X={city.X} and Y={city.Y} and size={city.Size}");
+        }       
+    }
+
+    private void InitializePlayer()
+    {
+        var firstCity = Cities[0];        
+        PlayerController = Instantiate(PlayerControllerBase, new Vector3(firstCity.X, firstCity.Y, 0), Quaternion.identity);
+        PlayerController.CityEntered = firstCity;
+
+        Debug.Log($"Created Player in {firstCity.Name} with X={firstCity.X} and Y={firstCity.Y}");
+        
         PlayerController.InitializePlayer();
     }
 
@@ -108,7 +161,7 @@ public class WorldController : MonoBehaviour
 
 public class MovePlayer
 {
-    public const float PlayerSpeed = 10.0f;    
+    public const float PlayerSpeed = 1.0f;    
     public MovePlayer(Vector3 moveFrom, Vector3 moveTo)
     {
         MoveFrom = new Vector3(moveFrom.x, moveFrom.y, 0);
@@ -124,4 +177,11 @@ public class MovePlayer
         return new Vector3(targetPosition.x, targetPosition.y, 0);
 
     }
+}
+
+public class InitializeCity
+{
+    public string Name { get; set; }
+
+    public float Size { get; set; }
 }
