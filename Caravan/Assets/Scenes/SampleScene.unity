@@ -432,8 +432,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d59c89f26d33864b882e194a51228cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerController: {fileID: 1862756488}
-  CityController: {fileID: 1072460551}
+  PlayerControllerBase: {fileID: 1862756488}
+  PlayerController: {fileID: 0}
+  CityControllerBase: {fileID: 1072460551}
 --- !u!4 &1103768341
 Transform:
   m_ObjectHideFlags: 0
