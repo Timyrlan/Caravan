@@ -142,7 +142,7 @@ public class WorldController : MonoBehaviour
     private void EnterCity(CityController city)
     {
         PlayerController.CityEntered = city;
-        Debug.Log($"You enter city {city}");
+        Debug.Log($"You enter {city.Name}");
     }
 
     private CityController FindCurrentCity()
