@@ -23,10 +23,13 @@ public class WorldController : MonoBehaviour
     [SerializeField]
     public CityController CityControllerBase;
 
+    
+
     public const float CameraWidth = 20;
     public const float CameraHeight = 10;
     public const float CameraBorder = 2;
     public const float CityUnDensity = 2;
+    public const float FogSize = 0.2f;
 
 
     public const float CoordinateAccuracy = 0.01f;
@@ -34,6 +37,7 @@ public class WorldController : MonoBehaviour
     public const int InitializeCityCount = 10;
 
     private List<CityController> Cities { get; set; } = new List<CityController>();
+    
 
     private InitializeCity[] InitializeCitiesArray = new InitializeCity[] {
         new InitializeCity{ Name = "Moscow", Size = 1},
@@ -52,6 +56,7 @@ public class WorldController : MonoBehaviour
 
     void Start()
     {
+        
         InitializeCities();
         InitializePlayer();
     }
@@ -77,6 +82,8 @@ public class WorldController : MonoBehaviour
         return new Vector3(cityX, cityY, 0);
     }
 
+    
+
     private InitializeCity GetRandomInitializeCity()
     {
         var random = Random.Range(0, InitializeCitiesArray.Length);
@@ -84,6 +91,8 @@ public class WorldController : MonoBehaviour
         InitializeCitiesArray = InitializeCitiesArray.Where(c => c.Name != result.Name).ToArray();
         return result;
     }
+
+    
 
     private void InitializeCities()
     {
@@ -127,7 +136,7 @@ public class WorldController : MonoBehaviour
 
         Debug.Log($"Created Player in {firstCity.Name} with X={firstCity.X} and Y={firstCity.Y}");
         
-        PlayerController.InitializePlayer();
+        PlayerController.InitializePlayer();        
     }
     
     void Update()
