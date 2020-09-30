@@ -1,15 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
+﻿using Assets.Scripts;
+using Assets.Scripts.World;
 using UnityEngine;
 
 public class CityController : MonoBehaviour
 {
-    [SerializeField]
-    private Canvas Canvas;
+    [SerializeField] private Canvas Canvas;
 
-    [SerializeField]
-    public WorldController WorldController;
+    [SerializeField] public WorldController WorldController;
 
     public float Size { get; set; } = 1;
     public float X { get; set; }
@@ -29,7 +26,6 @@ public class CityController : MonoBehaviour
         gameObject.SetActive(Visible);
 
 
-
         ChangeSize();
     }
 
@@ -40,21 +36,19 @@ public class CityController : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
     }
 
     private void ChangeSize()
     {
         transform.Find("Scalable").transform.localScale = new Vector3(Size, Size, 1);
         var caption = transform.Find("Caption").gameObject;
-        caption.transform.position = new Vector3(transform.position.x- Name.Length*0.05f, transform.position.y-Size/2-0.05f, 0);        
+        caption.transform.position = new Vector3(transform.position.x - Name.Length * 0.05f, transform.position.y - Size / 2 - 0.05f, 0);
     }
 }

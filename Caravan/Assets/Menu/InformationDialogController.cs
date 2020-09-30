@@ -1,25 +1,32 @@
 ﻿using TMPro;
 using UnityEngine;
 
-public class InformationDialogController : MonoBehaviour
+// ReSharper disable InconsistentNaming
+#pragma warning disable 649
+
+namespace Assets.Menu
 {
-    [SerializeField] private TextMeshProUGUI label;
-
-    [SerializeField] private GameObject parent;
-
-    void Start()
+    public class InformationDialogController : MonoBehaviour
     {
-        parent.SetActive(false);
-    }
+        [SerializeField] private TextMeshProUGUI label;
 
-    public void ShowMessage(string message)
-    {
-        label.text = message;
-        parent.SetActive(true);
-    }
+        [SerializeField] private GameObject parent;
 
-    public void InformationDialogClick(string message)
-    {
-        parent.SetActive(false);
+        private void Start()
+        {
+            //parent.SetActive(false);
+            //parent.transform.position = new Vector3(0,0,0);
+        }
+
+        public void ShowMessage(string message)
+        {
+            label.text = message;
+            parent.SetActive(true);
+        }
+
+        public void InformationDialogClick(string message)
+        {
+            parent.SetActive(false);
+        }
     }
 }

@@ -1,21 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Assets.Scripts.World;
 using UnityEngine;
 
-public class DesertController : MonoBehaviour
+namespace Assets.Scripts
 {
-    [SerializeField]
-    public WorldController WorldController;
-
-    // Start is called before the first frame update
-    void Start()
+    public class DesertController : MonoBehaviour
     {
-        
-    }
+        [SerializeField] public WorldController WorldController;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        // Start is called before the first frame update
+        private void Start()
+        {
+        }
+
+        // Update is called once per frame
+        private void Update()
+        {
+        }
     }
 }

@@ -1,20 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    Transform player;
+    private Transform player;
 
-    void Start()
+    private void Start()
     {
-        player = GameObject.Find("Player").transform;   
+        player = GameObject.Find("Player").transform;
     }
 
 
-    void LateUpdate()
+    private void LateUpdate()
     {
-
         //transform.position = new Vector3(player.position.x, player.position.y, -10f);
     }
 }
