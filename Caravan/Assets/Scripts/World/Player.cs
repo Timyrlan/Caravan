@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Assets.Scripts.World.Cargos;
+using Assets.LogicScripts.Cargos;
 
 namespace Assets.Scripts.World
 {

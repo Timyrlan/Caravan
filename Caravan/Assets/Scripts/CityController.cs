@@ -1,5 +1,5 @@
-﻿using Assets.Scripts.World;
-using Assets.Scripts.World.Cargos;
+﻿using Assets.LogicScripts.Cargos;
+using Assets.Scripts.World;
 using UnityEngine;
 
 // ReSharper disable InconsistentNaming
