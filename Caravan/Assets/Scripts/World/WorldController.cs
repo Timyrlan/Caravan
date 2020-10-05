@@ -29,7 +29,7 @@ namespace Assets.Scripts.World
 
         [SerializeField] private Canvas Canvas;
 
-        [SerializeField] private CityController CityControllerBase;
+        [SerializeField] private CityController CityControllerBase; 
 
         [SerializeField] private DesertController DesertController;
 
@@ -184,10 +184,10 @@ namespace Assets.Scripts.World
 
             Player.Bramins.Add(new Bramin());
 
-            foreach (var playerBramin in Player.Bramins)
-            {
-                playerBramin.Bag.Weight = 400;
-            }
+            //foreach (var playerBramin in Player.Bramins)
+            //{
+            //    playerBramin.Bag.Weight = 400;
+            //}
 
             WriteLog($"You get 1 bramin and {Player.BraminWeightSumm} weight");
             WriteLog($"You leave {city.Name}");
@@ -201,11 +201,11 @@ namespace Assets.Scripts.World
 
 
             var getTokens = 0;
-            foreach (var playerBramin in Player.Bramins)
-            {
-                getTokens += playerBramin.Bag.Weight;
-                playerBramin.Bag.Weight = 0;
-            }
+            //foreach (var playerBramin in Player.Bramins)
+            //{
+            //    getTokens += playerBramin.Bag.Weight;
+            //    playerBramin.Bag.Weight = 0;
+            //}
 
             Player.Tokens += getTokens;
             WriteLog($"You get {getTokens} tokens");

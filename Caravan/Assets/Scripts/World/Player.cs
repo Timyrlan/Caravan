@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.World.Cargos;
 
 namespace Assets.Scripts.World
 {
@@ -20,6 +22,8 @@ namespace Assets.Scripts.World
     public class BraminBag
     {
         public const int MaxBraminBagWeight = 400;
-        public int Weight { get; set; }
+
+        public List<Cargo> Cargos { get; set; } = new List<Cargo>();
+        public int Weight => (int) Math.Round(Cargos.Sum(c => c.Weight));
     }
 }
