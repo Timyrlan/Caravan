@@ -27,17 +27,6 @@ namespace Assets.Scripts.World
         private const int LogLength = 100;
 
 
-        [SerializeField] private Canvas Canvas;
-
-        [SerializeField] private CityController CityControllerBase; 
-
-        [SerializeField] private DesertController DesertController;
-
-        [SerializeField] private TextMeshProUGUI Header;
-
-        [SerializeField] private InformationDialogController InformationDialog;
-
-
         private InitializeCity[] InitializeCitiesArray =
         {
             new InitializeCity {Name = "Moscow", Size = 1},
@@ -52,11 +41,7 @@ namespace Assets.Scripts.World
             new InitializeCity {Name = "Perm", Size = 1.1f}
         };
 
-        [SerializeField] private TextMeshProUGUI LogCaption;
 
-        [SerializeField] private PlayerController PlayerController;
-
-        [SerializeField] public PlayerController PlayerControllerBase;
         private List<string> Log { get; set; }
 
         private List<CityController> Cities { get; } = new List<CityController>();
@@ -66,6 +51,7 @@ namespace Assets.Scripts.World
 
         private void Start()
         {
+            SettingsDialogController.LoadAndApplySettings();
             Log = new List<string>();
             MovePlayer = null;
             InitializeCities();
@@ -179,7 +165,6 @@ namespace Assets.Scripts.World
 
         private void LeaveCity(CityController city)
         {
-            
             PlayerController.CityEntered = null;
 
             Player.Bramins.Add(new Bramin());
@@ -234,7 +219,7 @@ namespace Assets.Scripts.World
 
         private static List<string> ConcatLog(string message, List<string> log)
         {
-            return new List<string> { message }.Concat(log).ToList();
+            return new List<string> {message}.Concat(log).ToList();
         }
 
         private void WriteSystemLog(string message)
@@ -247,5 +232,27 @@ namespace Assets.Scripts.World
             WriteSystemLog(message);
             WriteUserLog(message);
         }
+
+        #region SerializeField
+
+        [SerializeField] private Canvas Canvas;
+
+        [SerializeField] private CityController CityControllerBase;
+
+        [SerializeField] private DesertController DesertController;
+
+        [SerializeField] private TextMeshProUGUI Header;
+
+        [SerializeField] private InformationDialogController InformationDialog;
+
+        [SerializeField] private TextMeshProUGUI LogCaption;
+
+        [SerializeField] private PlayerController PlayerController;
+
+        [SerializeField] private PlayerController PlayerControllerBase;
+
+        [SerializeField] private SettingsDialogController SettingsDialogController;
+
+        #endregion
     }
 }
