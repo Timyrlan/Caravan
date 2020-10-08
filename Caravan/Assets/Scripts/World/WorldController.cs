@@ -52,6 +52,10 @@ namespace Assets.Scripts.World
         private void Start()
         {
             SettingsDialogController.LoadAndApplySettings();
+            MenuCanvas.gameObject.SetActive(true);
+            BackgroundMenuCanvas.gameObject.SetActive(true);
+
+
             Log = new List<string>();
             MovePlayer = null;
             InitializeCities();
@@ -252,6 +256,9 @@ namespace Assets.Scripts.World
         [SerializeField] private PlayerController PlayerControllerBase;
 
         [SerializeField] private SettingsDialogController SettingsDialogController;
+
+        [SerializeField] private Canvas MenuCanvas;
+        [SerializeField] private Canvas BackgroundMenuCanvas;
 
         #endregion
     }
