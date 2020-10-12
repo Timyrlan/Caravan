@@ -18,7 +18,5 @@ namespace Assets.LogicScripts.Buildings.Factories
             },
             Speed = 1
         };
-
-        public override string Type => nameof(SaltEvaporationFactory);
     }
 }

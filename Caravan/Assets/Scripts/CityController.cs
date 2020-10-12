@@ -23,7 +23,7 @@ namespace Assets.Scripts
 
         //public PricesMap PricesMap { get; set; }
 
-        private List<Building> Buildings { get; } = new List<Building>();
+        public List<Building> Buildings { get; } = new List<Building>();
 
         public void Process()
         {

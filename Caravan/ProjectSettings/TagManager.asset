@@ -13,8 +13,8 @@ TagManager:
   - UI
   - 
   - 
-  - FogOfWarMain
-  - FogOfWarSecondary
+  - BgUI
+  - 
   - 
   - 
   - 
@@ -38,9 +38,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: BgUi
+    uniqueID: 1279993315
+    locked: 0
   - name: Default
     uniqueID: 0
-    locked: 0
-  - name: FogOfWar
-    uniqueID: 2121571153
     locked: 0

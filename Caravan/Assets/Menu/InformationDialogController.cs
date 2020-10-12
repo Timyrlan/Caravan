@@ -12,12 +12,6 @@ namespace Assets.Menu
 
         [SerializeField] private GameObject parent;
 
-        private void Start()
-        {
-            //parent.SetActive(false);
-            //parent.transform.position = new Vector3(0,0,0);
-        }
-
         public void ShowMessage(string message)
         {
             label.text = message;

@@ -7,7 +7,13 @@ namespace Assets.LogicScripts.Buildings
 {
     public abstract class Building : IGameProcessibleObject, IGameCargoContainer
     {
-        public abstract string Type { get; }
+        protected Building()
+        {
+            Type = GetType().Name;
+        }
+
+        public string Type { get; }
+
         public List<Cargo> Cargos { get; set; } = new List<Cargo>();
 
         public abstract void Process();

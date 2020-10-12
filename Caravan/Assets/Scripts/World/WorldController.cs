@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.LogicScripts.Buildings.Factories;
 using Assets.Menu;
 using TMPro;
 using UnityEngine;
@@ -53,7 +54,12 @@ namespace Assets.Scripts.World
         {
             SettingsDialogController.LoadAndApplySettings();
             MenuCanvas.gameObject.SetActive(true);
-            BackgroundMenuCanvas.gameObject.SetActive(true);
+            //BackgroundMenuCanvas.gameObject.SetActive(true);
+            SettingsDialogController.gameObject.SetActive(false);
+            InformationDialog.gameObject.SetActive(false);
+            EnterCityMenuDialog.gameObject.SetActive(false);
+            CityControllerBase.transform.position = new Vector3(99999, 0, 0);
+            PlayerControllerBase.transform.position = new Vector3(99999, 0, 0);
 
 
             Log = new List<string>();
@@ -105,6 +111,14 @@ namespace Assets.Scripts.World
 
                 var cityVisible = i == 0;
                 city.Initialize(initializeCity, cityVisible);
+
+                if (i == 0) city.Buildings.Add(new SaltEvaporationFactory());
+                else if (i % 2 == 0) city.Buildings.Add(new SaltWaterWell());
+
+
+                city.Buildings.Add(new LivingHouse());
+
+
                 Cities.Add(city);
                 Debug.Log($"Created {city.Name} with X={city.X} and Y={city.Y} and size={city.Size}");
             }
@@ -188,16 +202,17 @@ namespace Assets.Scripts.World
 
             PlayerController.CityEntered = city;
 
+            EnterCityMenuDialog.ShowDialog(city);
 
-            var getTokens = 0;
+            //var getTokens = 0;
             //foreach (var playerBramin in Player.Bramins)
             //{
             //    getTokens += playerBramin.Bag.Weight;
             //    playerBramin.Bag.Weight = 0;
             //}
 
-            Player.Tokens += getTokens;
-            WriteLog($"You get {getTokens} tokens");
+            //Player.Tokens += getTokens;
+            //WriteLog($"You get {getTokens} tokens");
         }
 
         private CityController FindCurrentCity()
@@ -247,18 +262,25 @@ namespace Assets.Scripts.World
 
         [SerializeField] private TextMeshProUGUI Header;
 
-        [SerializeField] private InformationDialogController InformationDialog;
-
         [SerializeField] private TextMeshProUGUI LogCaption;
 
         [SerializeField] private PlayerController PlayerController;
 
         [SerializeField] private PlayerController PlayerControllerBase;
 
-        [SerializeField] private SettingsDialogController SettingsDialogController;
+        #endregion
+
+        #region Menu
 
         [SerializeField] private Canvas MenuCanvas;
+
         [SerializeField] private Canvas BackgroundMenuCanvas;
+
+        [SerializeField] private SettingsDialogController SettingsDialogController;
+
+        [SerializeField] private InformationDialogController InformationDialog;
+
+        [SerializeField] private EnterCityMenuDialogController EnterCityMenuDialog;
 
         #endregion
     }
