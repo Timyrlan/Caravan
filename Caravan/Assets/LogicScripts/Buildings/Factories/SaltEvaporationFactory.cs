@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Assets.LogicScripts.DifferentCargos;
 
 namespace Assets.LogicScripts.Buildings.Factories
 {

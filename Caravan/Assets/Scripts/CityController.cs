@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Assets.Contracts;
 using Assets.LogicScripts.Buildings;
-using Assets.LogicScripts.Cargos;
 using Assets.Scripts.World;
 using UnityEngine;
 
@@ -22,7 +21,7 @@ namespace Assets.Scripts
         public string Name { get; set; }
         public bool Visible { get; private set; }
 
-        public PricesMap PricesMap { get; set; }
+        //public PricesMap PricesMap { get; set; }
 
         private List<Building> Buildings { get; } = new List<Building>();
 

@@ -1,6 +1,5 @@
-﻿using Assets.LogicScripts.Buildings;
-using Assets.LogicScripts.Buildings.Factories;
-using Assets.LogicScripts.Cargos;
+﻿using Assets.LogicScripts.Buildings.Factories;
+using Assets.LogicScripts.DifferentCargos;
 using NUnit.Framework;
 
 namespace Assets.LogicScripts.LogicScriptsTests
