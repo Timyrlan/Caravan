@@ -50,6 +50,8 @@ namespace Assets.Scripts.World
         private MovePlayer MovePlayer { get; set; }
         private Player Player { get; set; }
 
+        private DateTime LastWorldProcessedDateTime { get; set; }
+
         private void Start()
         {
             SettingsDialogController.LoadAndApplySettings();
@@ -116,9 +118,6 @@ namespace Assets.Scripts.World
                 else if (i % 2 == 0) city.Buildings.Add(new SaltWaterWell());
 
 
-                city.Buildings.Add(new LivingHouse());
-
-
                 Cities.Add(city);
                 Debug.Log($"Created {city.Name} with X={city.X} and Y={city.Y} and size={city.Size}");
             }
@@ -141,6 +140,9 @@ namespace Assets.Scripts.World
             Debug.Log($"Created Player in {firstCity.Name} with X={firstCity.X} and Y={firstCity.Y}");
 
             PlayerController.InitializePlayer();
+
+
+            Player.Bramins = new List<Bramin> {new Bramin(), new Bramin(), new Bramin()};
         }
 
         public void WorldClick()
@@ -173,6 +175,7 @@ namespace Assets.Scripts.World
                     }
                 }
 
+                ProcessWorld();
                 UpdateHeader();
             }
             catch (Exception e)
@@ -181,18 +184,24 @@ namespace Assets.Scripts.World
             }
         }
 
+        public void ProcessWorld()
+        {
+            var now = DateTime.UtcNow;
+
+            if (LastWorldProcessedDateTime < DateTime.UtcNow.AddSeconds(-1))
+            {
+                foreach (var city in Cities) city.Process();
+
+                Player.Process();
+            }
+
+            LastWorldProcessedDateTime = now;
+        }
+
         private void LeaveCity(CityController city)
         {
             PlayerController.CityEntered = null;
 
-            Player.Bramins.Add(new Bramin());
-
-            //foreach (var playerBramin in Player.Bramins)
-            //{
-            //    playerBramin.Bag.Weight = 400;
-            //}
-
-            WriteLog($"You get 1 bramin and {Player.BraminWeightSumm} weight");
             WriteLog($"You leave {city.Name}");
         }
 

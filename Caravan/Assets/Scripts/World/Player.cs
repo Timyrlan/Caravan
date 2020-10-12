@@ -5,18 +5,30 @@ using Assets.Contracts;
 
 namespace Assets.Scripts.World
 {
-    public class Player
+    public class Player : IGameProcessibleObject
     {
         public List<Bramin> Bramins { get; set; } = new List<Bramin>();
 
         public int BraminWeightSumm => Bramins.Sum(c => c.Bag.Weight);
 
         public int Tokens { get; set; }
+
+        public void Process()
+        {
+            foreach (var bramin in Bramins) bramin.Process();
+        }
     }
 
-    public class Bramin
+    public class Bramin : IGameProcessibleObject
     {
         public BraminBag Bag { get; set; } = new BraminBag();
+
+        public long Age { get; set; }
+
+        public void Process()
+        {
+            Age++;
+        }
     }
 
     public class BraminBag

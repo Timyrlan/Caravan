@@ -29,10 +29,23 @@ namespace Assets.Menu
 
             WelcomeToCityCaption.text = $"Welcome to {city.Name}";
 
-            BuildingsCaption.text = string.Join($",{Environment.NewLine}", city.Buildings.Select(c => UfNameHelper.Format(c.Type)).OrderBy(c => c));
+            var cityNames = city.Buildings.Select(c => c.Type).GroupBy(c => c)
+                .Select(group => new
+                {
+                    CityName = group.Key,
+                    Count = group.Count()
+                })
+                .OrderBy(c => c.CityName).Select(c => FormatName(c.CityName, c.Count));
+
+            BuildingsCaption.text = string.Join($",{Environment.NewLine}", cityNames);
 
 
             transform.gameObject.SetActive(true);
+        }
+
+        private string FormatName(string name, int count)
+        {
+            return count > 1 ? $"{UfNameHelper.Format(name)} ({count})" : $"{UfNameHelper.Format(name)}";
         }
 
         private static List<string> ConcatLog(string message, List<string> log)

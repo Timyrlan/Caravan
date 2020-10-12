@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Assets.Contracts;
 using Assets.LogicScripts.Buildings;
+using Assets.LogicScripts.Buildings.Factories;
 using Assets.Scripts.World;
 using UnityEngine;
 
@@ -27,6 +29,8 @@ namespace Assets.Scripts
 
         public void Process()
         {
+            FillLivingHouses();
+
             foreach (var building in Buildings)
                 try
                 {
@@ -36,6 +40,14 @@ namespace Assets.Scripts
                 {
                     Debug.LogError($"Error while CityController='{Name}'.Process(): {e}");
                 }
+        }
+
+        private void FillLivingHouses()
+        {
+            var livingHousesCount = Buildings.Count(c => c.Type == nameof(LivingHouse));
+            var countToAdd = (int) Math.Floor(Size*10 - livingHousesCount);
+
+            for (var i = 0; i < countToAdd; i++) Buildings.Add(new LivingHouse());
         }
 
         public void Initialize(InitializeCity initializeCity, bool visible = false)
@@ -50,22 +62,14 @@ namespace Assets.Scripts
             gameObject.SetActive(Visible);
 
             ChangeSize();
+
+            FillLivingHouses();
         }
 
         public void SetVisible()
         {
             Visible = true;
             gameObject.SetActive(Visible);
-        }
-
-        // Start is called before the first frame update
-        private void Start()
-        {
-        }
-
-        // Update is called once per frame
-        private void Update()
-        {
         }
 
         private void ChangeSize()
