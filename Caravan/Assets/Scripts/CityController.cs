@@ -1,4 +1,8 @@
-﻿using Assets.LogicScripts.Cargos;
+﻿using System;
+using System.Collections.Generic;
+using Assets.Contracts;
+using Assets.LogicScripts.Buildings;
+using Assets.LogicScripts.Cargos;
 using Assets.Scripts.World;
 using UnityEngine;
 
@@ -6,7 +10,7 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
-    public class CityController : MonoBehaviour
+    public class CityController : MonoBehaviour, IGameProcessibleObject
     {
         [SerializeField] private Canvas Canvas;
 
@@ -19,6 +23,21 @@ namespace Assets.Scripts
         public bool Visible { get; private set; }
 
         public PricesMap PricesMap { get; set; }
+
+        private List<Building> Buildings { get; } = new List<Building>();
+
+        public void Process()
+        {
+            foreach (var building in Buildings)
+                try
+                {
+                    building.Process();
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Error while CityController='{Name}'.Process(): {e}");
+                }
+        }
 
         public void Initialize(InitializeCity initializeCity, bool visible = false)
         {

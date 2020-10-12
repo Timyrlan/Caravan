@@ -1,29 +1,12 @@
 ﻿using System;
 using System.Linq;
-using Assets.LogicScripts.Cargos;
+using Assets.Contracts;
 
 namespace Assets.LogicScripts.Buildings.Factories
 {
     public abstract class Factory : Building
     {
         public virtual Produce Produce { get; } = new Produce();
-
-        /// <summary>
-        ///     Добавлять можно только тот ресурс, который есть в ингридентах, из которых что-то производится
-        /// </summary>
-        public override void AddCargo(Cargo cargo)
-        {
-            if (Produce?.From == null || Produce.From.All(c => c.Cargo.Type != cargo.Type)) return;
-
-            base.AddCargo(cargo);
-        }
-
-        public void AddResultCargo(Cargo cargo)
-        {
-            if (Produce?.To == null || Produce.To.All(c => c.Cargo.Type != cargo.Type)) return;
-
-            base.AddCargo(cargo);
-        }
 
         public override void Process()
         {
@@ -51,6 +34,23 @@ namespace Assets.LogicScripts.Buildings.Factories
 
                 AddResultCargo(cargoToAdd);
             }
+        }
+
+        /// <summary>
+        ///     Добавлять можно только тот ресурс, который есть в ингридентах, из которых что-то производится
+        /// </summary>
+        public override void AddCargo(Cargo cargo)
+        {
+            if (Produce?.From == null || Produce.From.All(c => c.Cargo.Type != cargo.Type)) return;
+
+            base.AddCargo(cargo);
+        }
+
+        public void AddResultCargo(Cargo cargo)
+        {
+            if (Produce?.To == null || Produce.To.All(c => c.Cargo.Type != cargo.Type)) return;
+
+            base.AddCargo(cargo);
         }
     }
 }

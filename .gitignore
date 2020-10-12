@@ -61,3 +61,4 @@ crashlytics-build.properties
 Caravan/Build/
 Caravan/Temp/
 *.7z
+Caravan/Library/

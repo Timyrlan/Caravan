@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Assets.LogicScripts.Cargos;
+using Assets.Contracts;
 
 namespace Assets.LogicScripts.Buildings
 {
-    public abstract class Building
+    public abstract class Building : IGameProcessibleObject, IGameCargoContainer
     {
+        public abstract string Type { get; }
         public List<Cargo> Cargos { get; set; } = new List<Cargo>();
 
-        public abstract string Type { get; }
+        public abstract void Process();
 
         public Cargo GetCargoOfType(string type)
         {
@@ -20,8 +21,6 @@ namespace Assets.LogicScripts.Buildings
         {
             return Cargos.FirstOrDefault(c => c.Type == typeof(TType).Name);
         }
-
-        public abstract void Process();
 
         public virtual void AddCargo(Cargo cargo)
         {

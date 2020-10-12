@@ -1,4 +1,4 @@
-﻿using Assets.LogicScripts.Cargos;
+﻿using Assets.Contracts;
 
 namespace Assets.LogicScripts.Buildings.Factories
 {
