@@ -9,23 +9,13 @@ using UnityEngine;
 
 namespace Assets.Menu
 {
-    public class EnterCityMenuDialogController : MonoBehaviour, IGameDialog
+    public class EnterCityMenuDialogController : DialogBase
     {
         private CityController City { get; set; }
 
-        public void ShowDialog()
-        {
-            transform.gameObject.SetActive(true);
-        }
-
-        public void CloseDialog()
-        {
-            transform.gameObject.SetActive(false);
-        }
-
         public void ShowDialog(CityController city)
         {
-            City = city;
+            City = city; 
 
             WelcomeToCityCaption.text = $"Welcome to {city.Name}";
 
@@ -40,12 +30,27 @@ namespace Assets.Menu
             BuildingsCaption.text = string.Join($",{Environment.NewLine}", cityNames);
 
 
-            transform.gameObject.SetActive(true);
+            var resourcesNames = city.Buildings.SelectMany(c => c.Cargos).GroupBy(c => c.Type)
+                .Select(group => new
+                {
+                    Name = group.Key,
+                    Count = group.Sum(c => c.Count)
+                })
+                .OrderBy(c => c.Name).Select(c => FormatCount(c.Name, c.Count));
+
+            ResourcesCaption.text = string.Join($",{Environment.NewLine}", resourcesNames);
+
+            base.ShowDialog();
         }
 
         private string FormatName(string name, int count)
         {
             return count > 1 ? $"{UfNameHelper.Format(name)} ({count})" : $"{UfNameHelper.Format(name)}";
+        }
+
+        private string FormatCount(string name, decimal count)
+        {
+            return $"{UfNameHelper.Format(name)} ({Math.Floor(count)})";
         }
 
         private static List<string> ConcatLog(string message, List<string> log)
@@ -57,6 +62,7 @@ namespace Assets.Menu
 
         [SerializeField] private TextMeshProUGUI WelcomeToCityCaption;
         [SerializeField] private TextMeshProUGUI BuildingsCaption;
+        [SerializeField] private TextMeshProUGUI ResourcesCaption;
 
         #endregion
     }

@@ -3,27 +3,20 @@ using Assets.LogicScripts.DifferentCargos;
 
 namespace Assets.LogicScripts.Buildings.Factories
 {
-    public class SaltWaterWell : Factory
+    public class SaltWaterWell : ProcessBuilding
     {
         public override Produce Produce { get; } = new Produce
         {
             To = new List<ProduceIngredient>
             {
-                new ProduceIngredient {Cargo = new FreshWater(), Value = 1}
+                new ProduceIngredient {Cargo = new SaltWater(), Value = 1}
             },
-            Speed = 1
+            Speed = 0.01m
         };
-    }
 
-    public class LivingHouse : Factory
-    {
-        public override Produce Produce { get; } = new Produce
+        public override Dictionary<string, decimal> CanStoreCargos { get; set; } = new Dictionary<string, decimal>
         {
-            From = new List<ProduceIngredient>
-            {
-                new ProduceIngredient {Cargo = new FreshWater(), Value = 1}
-            },
-            Speed = 0.1m
+            {nameof(SaltWater), 10}
         };
     }
 }

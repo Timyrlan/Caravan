@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Contracts;
 using Assets.LogicScripts.Buildings.Factories;
 using Assets.Menu;
 using TMPro;
@@ -51,6 +52,8 @@ namespace Assets.Scripts.World
         private Player Player { get; set; }
 
         private DateTime LastWorldProcessedDateTime { get; set; }
+
+        private long ProcessWorldIteration { get; set; }
 
         private void Start()
         {
@@ -105,7 +108,7 @@ namespace Assets.Scripts.World
 
                 if (vector == null)
                 {
-                    Debug.Log($"Couldn't create cities on iteration {i}");
+                    WriteSystemLog($"Couldn't create cities on iteration {i}");
                     return;
                 }
 
@@ -119,7 +122,7 @@ namespace Assets.Scripts.World
 
 
                 Cities.Add(city);
-                Debug.Log($"Created {city.Name} with X={city.X} and Y={city.Y} and size={city.Size}");
+                WriteSystemLog($"Created {city.Name} with X={city.X} and Y={city.Y} and size={city.Size}");
             }
         }
 
@@ -127,7 +130,10 @@ namespace Assets.Scripts.World
         {
             foreach (var city in Cities.Where(c => !c.Visible))
                 if (Mathf.Abs(city.X - PlayerController.transform.position.x) < 1 + city.Size / 2 && Mathf.Abs(city.Y - PlayerController.transform.position.y) < 1 + city.Size / 2)
+                {
                     city.SetVisible();
+                    WriteLog($"You find city {city.Name}");
+                }
         }
 
         private void InitializePlayer()
@@ -137,7 +143,7 @@ namespace Assets.Scripts.World
             PlayerController = Instantiate(PlayerControllerBase, new Vector3(firstCity.X, firstCity.Y, 0), Quaternion.identity);
             PlayerController.CityEntered = firstCity;
 
-            Debug.Log($"Created Player in {firstCity.Name} with X={firstCity.X} and Y={firstCity.Y}");
+            WriteSystemLog($"Created Player in {firstCity.Name} with X={firstCity.X} and Y={firstCity.Y}");
 
             PlayerController.InitializePlayer();
 
@@ -152,6 +158,8 @@ namespace Assets.Scripts.World
 
         private void Update()
         {
+            if (GameStatus.Paused) return;
+
             try
             {
                 if (MovePlayer != null)
@@ -160,7 +168,7 @@ namespace Assets.Scripts.World
                     if (distance > CoordinateAccuracy)
                     {
                         var targetPosition = MovePlayer.GetPlayerTargetPosition(PlayerController.transform.position, Time.deltaTime);
-                        //Debug.Log($"Move player to: {targetPosition}, distance: {distance}");
+                        //WriteSystemLog($"Move player to: {targetPosition}, distance: {distance}");
                         PlayerController.transform.position = targetPosition;
 
                         var city = FindCurrentCity();
@@ -190,12 +198,16 @@ namespace Assets.Scripts.World
 
             if (LastWorldProcessedDateTime < DateTime.UtcNow.AddSeconds(-1))
             {
+                LastWorldProcessedDateTime = now;
+
+                ProcessWorldIteration++;
+
+                WriteSystemLog($"Process world iteration={ProcessWorldIteration}");
+
                 foreach (var city in Cities) city.Process();
 
                 Player.Process();
             }
-
-            LastWorldProcessedDateTime = now;
         }
 
         private void LeaveCity(CityController city)

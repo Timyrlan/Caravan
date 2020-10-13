@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Assets.Menu
 {
-    public class MenuDialogController : MonoBehaviour, IGameDialog
+    public class MenuDialogController : DialogBase
     {
         [SerializeField] private SettingsDialogController _settingsDialogController;
         public void OnExitButton()
@@ -15,16 +15,6 @@ namespace Assets.Menu
         {
             CloseDialog();
             _settingsDialogController.ShowDialog();
-        }
-
-        public void CloseDialog()
-        {
-            transform.gameObject.SetActive(false);
-        }
-
-        public void ShowDialog()
-        {
-            transform.gameObject.SetActive(transform);
         }
     }
 }

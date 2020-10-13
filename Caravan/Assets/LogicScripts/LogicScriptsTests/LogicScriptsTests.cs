@@ -12,9 +12,9 @@ namespace Assets.LogicScripts.LogicScriptsTests
         {
             var target = new SaltEvaporationFactory();
 
-            target.AddCargo(new FreshWater());
+            target.AddCargo(new FreshWater {Count = 1});
 
-            Assert.AreEqual(0, target.Cargos.Count);
+            Assert.AreEqual(0, target.GetFullCargoCount(nameof(FreshWater)));
         }
 
         // A Test behaves as an ordinary method
@@ -23,9 +23,9 @@ namespace Assets.LogicScripts.LogicScriptsTests
         {
             var target = new SaltEvaporationFactory();
 
-            target.AddCargo(new SaltWater());
+            target.AddCargo(new SaltWater {Count = 1});
 
-            Assert.AreEqual(1, target.Cargos.Count);
+            Assert.AreEqual(1, target.GetFullCargoCount(nameof(SaltWater)));
         }
 
         // A Test behaves as an ordinary method
@@ -38,8 +38,30 @@ namespace Assets.LogicScripts.LogicScriptsTests
 
             target.Process();
 
-            Assert.AreEqual(0.95m, target.GetCargoOfType<FreshWater>().Count);
-            Assert.AreEqual(0.05m, target.GetCargoOfType<Salt>().Count);
+            Assert.AreEqual(0.95m, target.GetFullCargoCount(nameof(FreshWater)));
+            Assert.AreEqual(0.05m, target.GetFullCargoCount(nameof(Salt)));
+        }
+
+        // A Test behaves as an ordinary method
+        [Test]
+        public void SaltWaterWellTest_Process()
+        {
+            var target = new SaltWaterWell();
+
+            target.Process();
+
+            Assert.AreEqual(0.01m, target.GetFullCargoCount(nameof(SaltWater)));
+        }
+
+        [Test]
+        public void LivingHouseTest_Process()
+        {
+            var target = new LivingHouse();
+            target.AddCargo(new FreshWater {Count = 1});
+
+            target.Process();
+
+            Assert.AreEqual(0.99m, target.GetFullCargoCount(nameof(FreshWater)));
         }
 
         //// A UnityTest behaves like a coroutine in Play Mode. In Edit Mode you can use

@@ -4,6 +4,7 @@ using System.Linq;
 using Assets.Contracts;
 using Assets.LogicScripts.Buildings;
 using Assets.LogicScripts.Buildings.Factories;
+using Assets.LogicScripts.DifferentCargos;
 using Assets.Scripts.World;
 using UnityEngine;
 
@@ -45,9 +46,16 @@ namespace Assets.Scripts
         private void FillLivingHouses()
         {
             var livingHousesCount = Buildings.Count(c => c.Type == nameof(LivingHouse));
-            var countToAdd = (int) Math.Floor(Size*10 - livingHousesCount);
+            var countToAdd = (int) Math.Floor(Size * 10 - livingHousesCount);
 
-            for (var i = 0; i < countToAdd; i++) Buildings.Add(new LivingHouse());
+            for (var i = 0; i < countToAdd; i++)
+                Buildings.Add(new LivingHouse
+                {
+                    Cargos = new List<Cargo>
+                    {
+                        new FreshWater {Count = 1}
+                    }
+                });
         }
 
         public void Initialize(InitializeCity initializeCity, bool visible = false)

@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace Assets.Menu
 {
-    public class SettingsDialogController : MonoBehaviour, IGameDialog
+    public class SettingsDialogController : DialogBase, IGameDialog
     {
         [SerializeField] private Toggle HowLogToggle;
 
@@ -12,17 +12,17 @@ namespace Assets.Menu
 
         private GameSettings Settings { get; set; }
 
-        public void ShowDialog()
+        public override void ShowDialog()
         {
-            transform.gameObject.SetActive(true);
             SetSettingsFromGameSettingsToControls(Settings);
+            base.ShowDialog();
         }
 
 
-        public void CloseDialog()
+        public override void CloseDialog()
         {
             OnResetSettings();
-            transform.gameObject.SetActive(false);
+            base.CloseDialog(); 
         }
 
         /// <summary>
