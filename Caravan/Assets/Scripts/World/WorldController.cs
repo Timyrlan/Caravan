@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Assets.Contracts;
 using Assets.LogicScripts.Buildings.Factories;
 using Assets.Menu;
@@ -72,6 +73,11 @@ namespace Assets.Scripts.World
             InitializeCities();
             InitializePlayer();
             UpdateHeader();
+        }
+
+        private async Task<string> TestTask()
+        {
+            return DateTime.UtcNow.ToString();
         }
 
         private Vector3? GenerateInitializedCityVectorInScreenXN(int n, float size, int deep)

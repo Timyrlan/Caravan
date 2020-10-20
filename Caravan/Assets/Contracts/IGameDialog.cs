@@ -2,7 +2,6 @@
 {
     public interface IGameDialog
     {
-
         void ShowDialog();
         void CloseDialog();
     }

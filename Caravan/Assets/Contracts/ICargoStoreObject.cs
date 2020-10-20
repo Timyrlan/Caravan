@@ -2,12 +2,12 @@
 
 namespace Assets.Contracts
 {
-    public interface ICargoStoreObject
-    {
-        List<Cargo> Cargos { get; }
+    //public interface ICargoStoreObject
+    //{
+    //    List<Cargo> Cargos { get; }
 
-        decimal CanAddCargoMore(string type);
+    //    decimal CanAddCargoMore(string type);
 
-        bool AddCargo(Cargo cargo);
-    }
+    //    bool AddCargo(Cargo cargo);
+    //}
 }

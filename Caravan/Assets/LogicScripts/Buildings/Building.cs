@@ -4,7 +4,7 @@ using Assets.Contracts;
 
 namespace Assets.LogicScripts.Buildings
 {
-    public abstract class Building : IGameProcessibleObject, IGameCargoContainer, ICargoStoreObject
+    public abstract class Building : IGameProcessibleObject, IGameCargoContainer//, ICargoStoreObject
     {
         protected Building()
         {

@@ -21,7 +21,7 @@ MonoBehaviour:
   m_ShowMode: 4
   m_Title: 
   m_RootView: {fileID: 6}
-  m_MinSize: {x: 875, y: 300}
+  m_MinSize: {x: 875, y: 392}
   m_MaxSize: {x: 10000, y: 10000}
   m_Maximized: 1
 --- !u!114 &2
@@ -45,10 +45,10 @@ MonoBehaviour:
     y: 30
     width: 2560
     height: 1307
-  m_MinSize: {x: 678, y: 342}
-  m_MaxSize: {x: 12003, y: 8042}
+  m_MinSize: {x: 577, y: 342}
+  m_MaxSize: {x: 12002, y: 8042}
   vertical: 0
-  controlID: 61
+  controlID: 120
 --- !u!114 &3
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -68,8 +68,8 @@ MonoBehaviour:
     y: 0
     width: 519
     height: 1307
-  m_MinSize: {x: 276, y: 71}
-  m_MaxSize: {x: 4001, y: 4021}
+  m_MinSize: {x: 275, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 15}
   m_Panes:
   - {fileID: 15}
@@ -85,23 +85,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 1
   m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: SceneHierarchyWindow
+  m_Name: TestRunnerWindow
   m_EditorClassIdentifier: 
   m_Children: []
   m_Position:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 475
-    height: 788
-  m_MinSize: {x: 200, y: 200}
+    width: 451
+    height: 787
+  m_MinSize: {x: 100, y: 100}
   m_MaxSize: {x: 4000, y: 4000}
-  m_ActualView: {fileID: 16}
+  m_ActualView: {fileID: 12}
   m_Panes:
   - {fileID: 12}
   - {fileID: 16}
-  m_Selected: 1
-  m_LastSelected: 0
+  m_Selected: 0
+  m_LastSelected: 1
 --- !u!114 &5
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -118,9 +118,9 @@ MonoBehaviour:
   m_Position:
     serializedVersion: 2
     x: 0
-    y: 788
+    y: 787
     width: 2041
-    height: 519
+    height: 520
   m_MinSize: {x: 100, y: 100}
   m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 19}
@@ -217,10 +217,10 @@ MonoBehaviour:
     y: 0
     width: 2041
     height: 1307
-  m_MinSize: {x: 402, y: 342}
+  m_MinSize: {x: 302, y: 342}
   m_MaxSize: {x: 8002, y: 8042}
   vertical: 1
-  controlID: 62
+  controlID: 83
 --- !u!114 &10
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -241,8 +241,8 @@ MonoBehaviour:
     x: 0
     y: 0
     width: 2041
-    height: 788
-  m_MinSize: {x: 402, y: 221}
+    height: 787
+  m_MinSize: {x: 302, y: 221}
   m_MaxSize: {x: 8002, y: 4021}
   vertical: 0
   controlID: 63
@@ -256,24 +256,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 1
   m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: GameView
+  m_Name: SceneView
   m_EditorClassIdentifier: 
   m_Children: []
   m_Position:
     serializedVersion: 2
-    x: 475
+    x: 451
     y: 0
-    width: 1566
-    height: 788
-  m_MinSize: {x: 202, y: 221}
-  m_MaxSize: {x: 4002, y: 4021}
-  m_ActualView: {fileID: 18}
+    width: 1590
+    height: 787
+  m_MinSize: {x: 200, y: 200}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_ActualView: {fileID: 17}
   m_Panes:
   - {fileID: 17}
   - {fileID: 18}
   - {fileID: 13}
-  m_Selected: 1
-  m_LastSelected: 0
+  m_Selected: 0
+  m_LastSelected: 1
 --- !u!114 &12
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -296,20 +296,20 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 73
-    width: 474
-    height: 767
+    width: 450
+    height: 766
   m_ViewDataDictionary: {fileID: 0}
   m_Spl:
-    ID: 483
+    ID: 11776
     splitterInitialOffset: 0
     currentActiveSplitter: -1
-    realSizes: 0b020000ae000000
+    realSizes: 0a020000ae000000
     relativeSizes:
     - 0.75
     - 0.25
     minSizes: 2000000020000000
     maxSizes: 0000000000000000
-    lastTotalSize: 697
+    lastTotalSize: 696
     splitSize: 6
     xOffset: 0
   m_TestTypeToolbarIndex: 0
@@ -321,7 +321,7 @@ MonoBehaviour:
       name: Caravan
       fullName: Caravan
       resultStatus: 1
-      duration: 2.7770975
+      duration: 0.1039596
       messages: 
       output: 
       stacktrace: 
@@ -337,7 +337,7 @@ MonoBehaviour:
       name: LogicScriptsTests.dll
       fullName: C:/Projects/Unity/Projects/Caravan2/Caravan/Library/ScriptAssemblies/LogicScriptsTests.dll
       resultStatus: 1
-      duration: 2.7398593
+      duration: 0.0758822
       messages: 
       output: 
       stacktrace: 
@@ -353,7 +353,7 @@ MonoBehaviour:
       name: Assets
       fullName: Assets
       resultStatus: 1
-      duration: 2.731102
+      duration: 0.0696387
       messages: 
       output: 
       stacktrace: 
@@ -369,7 +369,7 @@ MonoBehaviour:
       name: LogicScripts
       fullName: Assets.LogicScripts
       resultStatus: 1
-      duration: 2.7261977
+      duration: 0.0635369
       messages: 
       output: 
       stacktrace: 
@@ -385,7 +385,7 @@ MonoBehaviour:
       name: LogicScriptsTests
       fullName: Assets.LogicScripts.LogicScriptsTests
       resultStatus: 1
-      duration: 2.719444
+      duration: 0.0577491
       messages: 
       output: 
       stacktrace: 
@@ -401,7 +401,7 @@ MonoBehaviour:
       name: LogicScriptsTests
       fullName: Assets.LogicScripts.LogicScriptsTests.LogicScriptsTests
       resultStatus: 1
-      duration: 2.7129169
+      duration: 0.051478
       messages: 
       output: 
       stacktrace: 
@@ -417,7 +417,7 @@ MonoBehaviour:
       name: FactoryAllowAddWrightCargo
       fullName: Assets.LogicScripts.LogicScriptsTests.LogicScriptsTests.FactoryAllowAddWrightCargo
       resultStatus: 1
-      duration: 2.6843104
+      duration: 0.02078
       messages: 
       output: 
       stacktrace: 
@@ -434,7 +434,24 @@ MonoBehaviour:
       name: FactoryNotAllowAddWrongCargo
       fullName: Assets.LogicScripts.LogicScriptsTests.LogicScriptsTests.FactoryNotAllowAddWrongCargo
       resultStatus: 1
-      duration: 0.0005546
+      duration: 0.000561
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: LogicScriptsTests.dll/Assets/LogicScripts/LogicScriptsTests/[LogicScriptsTests][suite]
+    - id: 1006
+      uniqueId: LogicScriptsTests.dll/Assets/LogicScripts/LogicScriptsTests/LogicScriptsTests/[LogicScriptsTests][Assets.LogicScripts.LogicScriptsTests.LogicScriptsTests.LivingHouseTest_Process]
+      name: LivingHouseTest_Process
+      fullName: Assets.LogicScripts.LogicScriptsTests.LogicScriptsTests.LivingHouseTest_Process
+      resultStatus: 1
+      duration: 0.0015503
       messages: 
       output: 
       stacktrace: 
@@ -451,7 +468,7 @@ MonoBehaviour:
       name: SaltEvaporationFactoryTest_Process
       fullName: Assets.LogicScripts.LogicScriptsTests.LogicScriptsTests.SaltEvaporationFactoryTest_Process
       resultStatus: 1
-      duration: 0.0031639
+      duration: 0.0007583
       messages: 
       output: 
       stacktrace: 
@@ -463,7 +480,24 @@ MonoBehaviour:
       - Uncategorized
       parentId: 1001
       parentUniqueId: LogicScriptsTests.dll/Assets/LogicScripts/LogicScriptsTests/[LogicScriptsTests][suite]
-    m_ResultText: LogicScriptsTests (2,713s)
+    - id: 1005
+      uniqueId: LogicScriptsTests.dll/Assets/LogicScripts/LogicScriptsTests/LogicScriptsTests/[LogicScriptsTests][Assets.LogicScripts.LogicScriptsTests.LogicScriptsTests.SaltWaterWellTest_Process]
+      name: SaltWaterWellTest_Process
+      fullName: Assets.LogicScripts.LogicScriptsTests.LogicScriptsTests.SaltWaterWellTest_Process
+      resultStatus: 1
+      duration: 0.0005384
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: LogicScriptsTests.dll/Assets/LogicScripts/LogicScriptsTests/[LogicScriptsTests][suite]
+    m_ResultText: LogicScriptsTests (0,051s)
     m_ResultStacktrace: 
     m_TestListState:
       scrollPos: {x: 0, y: 0}
@@ -567,10 +601,10 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 468
-    y: 181
-    width: 973
-    height: 501
+    x: 285
+    y: 73
+    width: 1754
+    height: 766
   m_ViewDataDictionary: {fileID: 0}
 --- !u!114 &14
 MonoBehaviour:
@@ -594,9 +628,9 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 861
+    y: 860
     width: 2040
-    height: 498
+    height: 499
   m_ViewDataDictionary: {fileID: 0}
   m_SearchFilter:
     m_NameFilter: 
@@ -611,20 +645,20 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Menu
+    - Assets/Contracts
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/Menu
+  - Assets/Contracts/ServerContracts
   m_LastFoldersGridSize: 16
   m_LastProjectPath: C:\Projects\Unity\Projects\Caravan2\Caravan
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 3e3b0000
-    m_LastClickedID: 15166
-    m_ExpandedIDs: 000000001c3b00001e3b0000203b0000223b0000243b0000263b0000283b0000383b00003e3b000000ca9a3b
+    m_SelectedIDs: eaa50000
+    m_LastClickedID: 42474
+    m_ExpandedIDs: 00000000863b0000883b00008a3b00008c3b00008e3b0000903b0000923b0000943b0000963b0000a83b000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -652,7 +686,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 000000001c3b00001e3b0000203b0000223b0000243b0000263b0000283b0000
+    m_ExpandedIDs: 00000000863b0000883b00008a3b00008c3b00008e3b0000903b0000923b0000943b0000963b0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -677,21 +711,21 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 70490000
-    m_LastClickedInstanceID: 18800
+    m_SelectedInstanceIDs: 
+    m_LastClickedInstanceID: 0
     m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: c62300004048000000000000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: EnterCityMenuDialogController
-      m_OriginalName: EnterCityMenuDialogController
+      m_Name: WorldController
+      m_OriginalName: WorldController
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 20856
+      m_UserData: 14386
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
       m_OriginalEventType: 0
@@ -775,9 +809,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: aa480000
-      m_LastClickedID: 18602
-      m_ExpandedIDs: e486fffff086ffff1287ffff2287ffff2e87ffff20a5ffff64baffff94e4ffff9eefffffb4efffff40f0ffff4af2ffff60f2ffffdcf2ffff0cf3ffff22f3ffffaef3ffffd0f3ffffe6f3ffff62f4ffff82f4ffff98f4ffff24f5ffff16f9ffff2af9ffff4ef9ffff1afbffff9c480000e24800002449000028490000e8490000084a0000224a0000
+      m_SelectedIDs: 
+      m_LastClickedID: 0
+      m_ExpandedIDs: 5278ffff6878ffff0479ffff027bffff187bffff947bffff927cffffa87cffff247dffff8482ffff9a82ffff2683ffffe884fffffe84ffff8a85ffff2486ffff3a86ffffc686ffff748affff8a8affff168bffff648cffff7a8cffff068dffffa08dffffb68dffff328effff728effff888effff048fffff448fffff5a8fffffe68fffff7e90ffff9490ffff1091ffffa091ffffb691ffff3292ffff7a92ffff9092ffff0c93ffff4693ffff5c93ffffd893fffffa94ffff1095ffff8c95ffffc495ffffda95ffff6696ffff44eeffff48eeffff54eeffff5efbffff1c3900005639000070390000a2390000fe3900002e3a0000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -822,10 +856,10 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 475
+    x: 451
     y: 73
-    width: 1564
-    height: 767
+    width: 1588
+    height: 766
   m_ViewDataDictionary: {fileID: 0}
   m_ShowContextualTools: 0
   m_WindowGUID: 0b467147f55a1124baa7433811681f28
@@ -837,9 +871,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 647.08923, y: 339.20282, z: -2386.0327}
+    m_Target: {x: 1024.8447, y: 504.2992, z: -2469.377}
     speed: 2
-    m_Value: {x: 647.08923, y: 339.20282, z: -2386.0327}
+    m_Value: {x: 1024.8447, y: 504.2992, z: -2469.377}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -889,9 +923,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 457.26117
+    m_Target: 709.7022
     speed: 2
-    m_Value: 457.26117
+    m_Value: 709.7022
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -937,10 +971,10 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 475
+    x: 451
     y: 73
-    width: 1564
-    height: 767
+    width: 1588
+    height: 766
   m_ViewDataDictionary: {fileID: 0}
   m_SerializedViewNames: []
   m_SerializedViewValues: []
@@ -950,7 +984,7 @@ MonoBehaviour:
   m_ShowGizmos: 0
   m_TargetDisplay: 0
   m_ClearColor: {r: 0, g: 0, b: 0, a: 0}
-  m_TargetSize: {x: 1564, y: 746}
+  m_TargetSize: {x: 1588, y: 745}
   m_TextureFilterMode: 0
   m_TextureHideFlags: 61
   m_RenderIMGUI: 1
@@ -965,10 +999,10 @@ MonoBehaviour:
     m_VRangeLocked: 0
     hZoomLockedByDefault: 0
     vZoomLockedByDefault: 0
-    m_HBaseRangeMin: -782
-    m_HBaseRangeMax: 782
-    m_VBaseRangeMin: -373
-    m_VBaseRangeMax: 373
+    m_HBaseRangeMin: -794
+    m_HBaseRangeMax: 794
+    m_VBaseRangeMin: -372.5
+    m_VBaseRangeMax: 372.5
     m_HAllowExceedBaseRangeMin: 1
     m_HAllowExceedBaseRangeMax: 1
     m_VAllowExceedBaseRangeMin: 1
@@ -986,23 +1020,23 @@ MonoBehaviour:
       serializedVersion: 2
       x: 0
       y: 21
-      width: 1564
-      height: 746
+      width: 1588
+      height: 745
     m_Scale: {x: 1, y: 1}
-    m_Translation: {x: 782, y: 373}
+    m_Translation: {x: 794, y: 372.5}
     m_MarginLeft: 0
     m_MarginRight: 0
     m_MarginTop: 0
     m_MarginBottom: 0
     m_LastShownAreaInsideMargins:
       serializedVersion: 2
-      x: -782
-      y: -373
-      width: 1564
-      height: 746
+      x: -794
+      y: -372.5
+      width: 1588
+      height: 745
     m_MinimalGUI: 1
   m_defaultScale: 1
-  m_LastWindowPixelSize: {x: 1564, y: 767}
+  m_LastWindowPixelSize: {x: 1588, y: 766}
   m_ClearInEditMode: 1
   m_NoCameraWarning: 1
   m_LowResolutionForAspectRatios: 01000000000000000000
@@ -1030,7 +1064,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 861
+    y: 860
     width: 2040
-    height: 498
+    height: 499
   m_ViewDataDictionary: {fileID: 0}
