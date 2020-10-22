@@ -1,4 +1,4 @@
-﻿using Assets.Contracts.Dto;
+﻿using CrvService.Contracts.Dto;
 
 namespace Assets.Contracts
 {

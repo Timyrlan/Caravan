@@ -30,19 +30,7 @@ namespace Assets.Scripts.World
         private const int LogLength = 100;
 
 
-        private InitializeCity[] InitializeCitiesArray =
-        {
-            new InitializeCity {Name = "Moscow", Size = 1},
-            new InitializeCity {Name = "St.Petersburg", Size = 0.7f},
-            new InitializeCity {Name = "Chita", Size = 0.5f},
-            new InitializeCity {Name = "Voronezh", Size = 0.5f},
-            new InitializeCity {Name = "Kaluga", Size = 0.5f},
-            new InitializeCity {Name = "Ufa", Size = 0.3f},
-            new InitializeCity {Name = "Novgorod", Size = 0.5f},
-            new InitializeCity {Name = "Zelenograd", Size = 0.3f},
-            new InitializeCity {Name = "Izhevsk", Size = 0.7f},
-            new InitializeCity {Name = "Perm", Size = 1.1f}
-        };
+
 
 
         private List<string> Log { get; set; }
