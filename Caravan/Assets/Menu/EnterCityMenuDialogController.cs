@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Assets.Contracts;
-using Assets.LogicScripts.Buildings;
 using Assets.Scripts;
 using TMPro;
 using UnityEngine;
@@ -15,30 +13,30 @@ namespace Assets.Menu
 
         public void ShowDialog(CityController city)
         {
-            City = city; 
+            City = city;
 
-            WelcomeToCityCaption.text = $"Welcome to {city.Name}";
+            //WelcomeToCityCaption.text = $"Welcome to {city.Name}";
 
-            var cityNames = city.Buildings.Select(c => c.Type).GroupBy(c => c)
-                .Select(group => new
-                {
-                    CityName = group.Key,
-                    Count = group.Count()
-                })
-                .OrderBy(c => c.CityName).Select(c => FormatName(c.CityName, c.Count));
+            //var cityNames = city.Buildings.Select(c => c.Type).GroupBy(c => c)
+            //    .Select(group => new
+            //    {
+            //        CityName = group.Key,
+            //        Count = group.Count()
+            //    })
+            //    .OrderBy(c => c.CityName).Select(c => FormatName(c.CityName, c.Count));
 
-            BuildingsCaption.text = string.Join($",{Environment.NewLine}", cityNames);
+            //BuildingsCaption.text = string.Join($",{Environment.NewLine}", cityNames);
 
 
-            var resourcesNames = city.Buildings.SelectMany(c => c.Cargos).GroupBy(c => c.Type)
-                .Select(group => new
-                {
-                    Name = group.Key,
-                    Count = group.Sum(c => c.Count)
-                })
-                .OrderBy(c => c.Name).Select(c => FormatCount(c.Name, c.Count));
+            //var resourcesNames = city.Buildings.SelectMany(c => c.Cargos).GroupBy(c => c.Type)
+            //    .Select(group => new
+            //    {
+            //        Name = group.Key,
+            //        Count = group.Sum(c => c.Count)
+            //    })
+            //    .OrderBy(c => c.Name).Select(c => FormatCount(c.Name, c.Count));
 
-            ResourcesCaption.text = string.Join($",{Environment.NewLine}", resourcesNames);
+            //ResourcesCaption.text = string.Join($",{Environment.NewLine}", resourcesNames);
 
             base.ShowDialog();
         }

@@ -1,4 +1,4 @@
-﻿using Assets.Contracts;
+﻿using Assets.Scripts.World;
 using UnityEngine;
 
 namespace Assets.Menu
@@ -7,14 +7,14 @@ namespace Assets.Menu
     {
         public virtual void ShowDialog()
         {
-            GameStatus.Paused = true;
+            //GameStatus.Paused = true;
             transform.gameObject.SetActive(true);
         }
 
         public virtual void CloseDialog()
         {
             transform.gameObject.SetActive(false);
-            GameStatus.Paused = false;
+            SharedValues.Paused = false;
         }
     }
 }

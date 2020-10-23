@@ -1,11 +1,11 @@
-﻿using Assets.Contracts;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Assets.Menu
 {
     public class MenuDialogController : DialogBase
     {
         [SerializeField] private SettingsDialogController _settingsDialogController;
+
         public void OnExitButton()
         {
             Application.Quit();

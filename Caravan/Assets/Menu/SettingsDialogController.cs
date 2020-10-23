@@ -1,5 +1,4 @@
-﻿using Assets.Contracts;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 namespace Assets.Menu
@@ -22,7 +21,7 @@ namespace Assets.Menu
         public override void CloseDialog()
         {
             OnResetSettings();
-            base.CloseDialog(); 
+            base.CloseDialog();
         }
 
         /// <summary>
@@ -59,7 +58,6 @@ namespace Assets.Menu
         /// </summary>
         public void OnApplyAndSaveSettings()
         {
-            
             SetSettingsFromControlsToGameSettings(Settings);
             ApplySettings(Settings);
             SaveSettingsToStore(Settings);

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Assets.Contracts;
-using Assets.LogicScripts.Buildings.Factories;
 using Assets.Menu;
+using CrvService.Shared.Contracts.Dto;
+using CrvService.Shared.Contracts.Entities;
+using CrvService.Shared.Logic;
+using CrvService.Shared.Logic.ClientSide;
+using CrvService.Shared.Logic.ClientSide.Server;
 using TMPro;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 // ReSharper disable ConvertToNullCoalescingCompoundAssignment
 
@@ -16,6 +17,12 @@ namespace Assets.Scripts.World
 #pragma warning disable 649
 
 // ReSharper disable InconsistentNaming
+    public class AllObjectsDictionaryItem
+    {
+        public MonoBehaviour Controller { get; set; }
+        public bool Updated { get; set; }
+        public object ItemFromServer { get; set; }
+    }
 
     public class WorldController : MonoBehaviour
     {
@@ -29,20 +36,23 @@ namespace Assets.Scripts.World
 
         private const int LogLength = 100;
 
-
-
-
+        private Dictionary<string, AllObjectsDictionaryItem> AllObjects { get; } = new Dictionary<string, AllObjectsDictionaryItem>();
 
         private List<string> Log { get; set; }
 
         private List<CityController> Cities { get; } = new List<CityController>();
 
         private MovePlayer MovePlayer { get; set; }
-        private Player Player { get; set; }
+        //private Player Player { get; set; }
 
         private DateTime LastWorldProcessedDateTime { get; set; }
 
         private long ProcessWorldIteration { get; set; }
+
+        private ICaravanServer CaravanServer { get; set; }
+
+        private IWorld World { get; set; }
+        private IPlayer Player { get; set; }
 
         private void Start()
         {
@@ -58,162 +68,156 @@ namespace Assets.Scripts.World
 
             Log = new List<string>();
             MovePlayer = null;
-            InitializeCities();
-            InitializePlayer();
-            UpdateHeader();
-        }
 
-        private async Task<string> TestTask()
-        {
-            return DateTime.UtcNow.ToString();
-        }
+            GetWorld();
 
-        private Vector3? GenerateInitializedCityVectorInScreenXN(int n, float size, int deep)
-        {
-            if (deep >= 20) return null;
-
-            var cityX = Random.Range(-CameraWidth * n / 2 + CameraBorder, CameraWidth * n / 2 - CameraBorder);
-            var cityY = Random.Range(-CameraHeight * n / 2 + CameraBorder, CameraHeight * n / 2 - CameraBorder);
-
-            foreach (var city in Cities)
-                if (Mathf.Abs(city.X - cityX) < (city.Size + size) * CityUnDensity && Mathf.Abs(city.Y - cityY) < (city.Size + size) * CityUnDensity)
-                    return GenerateInitializedCityVectorInScreenXN(n, size, deep + 1);
-
-            return new Vector3(cityX, cityY, 0);
+            //InitializeCities();
+            //InitializePlayer();
+            //UpdateHeader();
         }
 
 
-        private InitializeCity GetRandomInitializeCity()
+        private void GetWorld()
         {
-            var random = Random.Range(0, InitializeCitiesArray.Length);
-            var result = InitializeCitiesArray[random];
-            InitializeCitiesArray = InitializeCitiesArray.Where(c => c.Name != result.Name).ToArray();
-            return result;
+            var newInstanceFactory = new NewInstanceFactoryClientSide();
+            var processorsProvider = new ProcessorsProvider(newInstanceFactory);
+            var newWorldGenerator = new NewWorldGenerator(newInstanceFactory);
+            CaravanServer = new CaravanServerClientSide(processorsProvider, newInstanceFactory, newWorldGenerator);
+
+            var response = CaravanServer.ProcessWorld(string.Empty, string.Empty);
+            ProcessServerResponse(response);
         }
 
-
-        private void InitializeCities()
+        public void ProcessServerResponse(ProcessWorldDto response)
         {
-            for (var i = 0; i < InitializeCityCount; i++)
+            foreach (var obj in AllObjects) obj.Value.Updated = false;
+
+            var responseWorld = ToClientSideMapper.Map(response.World);
+            var responsePlayer = ToClientSideMapper.Map(response.Player);
+
+            foreach (var city in responseWorld.Cities.Collection) MapCity(city);
+
+            DestroyNotMappedWorldObjects();
+
+            World = responseWorld;
+            Player = responsePlayer;
+        }
+
+        private void MapCity(ICity city)
+        {
+            if (!AllObjects.TryGetValue(city.Guid, out var item))
             {
-                var initializeCity = GetRandomInitializeCity();
-
-                var vector = GenerateInitializedCityVectorInScreenXN(i < 5 ? 1 : 3, initializeCity.Size, 0);
-
-                if (vector == null)
-                {
-                    WriteSystemLog($"Couldn't create cities on iteration {i}");
-                    return;
-                }
-
-                var city = Instantiate(CityControllerBase, (Vector3) vector, Quaternion.identity);
-
-                var cityVisible = i == 0;
-                city.Initialize(initializeCity, cityVisible);
-
-                if (i == 0) city.Buildings.Add(new SaltEvaporationFactory());
-                else if (i % 2 == 0) city.Buildings.Add(new SaltWaterWell());
-
-
-                Cities.Add(city);
-                WriteSystemLog($"Created {city.Name} with X={city.X} and Y={city.Y} and size={city.Size}");
+                item = new AllObjectsDictionaryItem {ItemFromServer = city};
+                AllObjects.Add(city.Guid, item);
+                item.Controller = Instantiate(CityControllerBase, new Vector3(city.X, city.Y, 0), Quaternion.identity);
             }
+
+            // ReSharper disable once PossibleNullReferenceException
+            (item.Controller as CityController).UpdateFromServer(city);
+
+            item.Updated = true;
         }
 
-        private void UpdateVisibleCities()
+        private void DestroyNotMappedWorldObjects()
         {
-            foreach (var city in Cities.Where(c => !c.Visible))
-                if (Mathf.Abs(city.X - PlayerController.transform.position.x) < 1 + city.Size / 2 && Mathf.Abs(city.Y - PlayerController.transform.position.y) < 1 + city.Size / 2)
-                {
-                    city.SetVisible();
-                    WriteLog($"You find city {city.Name}");
-                }
+            //todo
         }
 
-        private void InitializePlayer()
-        {
-            Player = new Player();
-            var firstCity = Cities[0];
-            PlayerController = Instantiate(PlayerControllerBase, new Vector3(firstCity.X, firstCity.Y, 0), Quaternion.identity);
-            PlayerController.CityEntered = firstCity;
 
-            WriteSystemLog($"Created Player in {firstCity.Name} with X={firstCity.X} and Y={firstCity.Y}");
+        //private void UpdateVisibleCities()
+        //{
+        //    foreach (var city in Cities.Where(c => !c.Visible))
+        //        if (Mathf.Abs(city.X - PlayerController.transform.position.x) < 1 + city.Size / 2 && Mathf.Abs(city.Y - PlayerController.transform.position.y) < 1 + city.Size / 2)
+        //        {
+        //            city.SetVisible();
+        //            WriteLog($"You find city {city.Name}");
+        //        }
+        //}
 
-            PlayerController.InitializePlayer();
+        //private void InitializePlayer()
+        //{
+        //    Player = new Player();
+        //    var firstCity = Cities[0];
+        //    PlayerController = Instantiate(PlayerControllerBase, new Vector3(firstCity.X, firstCity.Y, 0), Quaternion.identity);
+        //    PlayerController.CityEntered = firstCity;
+
+        //    WriteSystemLog($"Created Player in {firstCity.Name} with X={firstCity.X} and Y={firstCity.Y}");
+
+        //    PlayerController.InitializePlayer();
 
 
-            Player.Bramins = new List<Bramin> {new Bramin(), new Bramin(), new Bramin()};
-        }
+        //    //Player.Bramins = new List<Bramin> {new Bramin(), new Bramin(), new Bramin()};
+        //}
 
         public void WorldClick()
         {
             MovePlayer = new MovePlayer(PlayerController.transform.position, Camera.main.ScreenToWorldPoint(Input.mousePosition));
         }
 
-        private void Update()
-        {
-            if (GameStatus.Paused) return;
+        //private void Update()
+        //{
+        //    //if (GameStatus.Paused) return;
 
-            try
-            {
-                if (MovePlayer != null)
-                {
-                    var distance = Vector3.Distance(MovePlayer.MoveTo, PlayerController.transform.position);
-                    if (distance > CoordinateAccuracy)
-                    {
-                        var targetPosition = MovePlayer.GetPlayerTargetPosition(PlayerController.transform.position, Time.deltaTime);
-                        //WriteSystemLog($"Move player to: {targetPosition}, distance: {distance}");
-                        PlayerController.transform.position = targetPosition;
+        //    try
+        //    {
+        //        if (MovePlayer != null)
+        //        {
+        //            var distance = Vector3.Distance(MovePlayer.MoveTo, PlayerController.transform.position);
+        //            if (distance > CoordinateAccuracy)
+        //            {
+        //                var targetPosition = MovePlayer.GetPlayerTargetPosition(PlayerController.transform.position, Time.deltaTime);
+        //                //WriteSystemLog($"Move player to: {targetPosition}, distance: {distance}");
+        //                PlayerController.transform.position = targetPosition;
 
-                        var city = FindCurrentCity();
-                        if (city == null && PlayerController.CityEntered != null) LeaveCity(PlayerController.CityEntered);
+        //                var city = FindCurrentCity();
+        //                if (city == null && PlayerController.CityEntered != null) LeaveCity(PlayerController.CityEntered);
 
-                        UpdateVisibleCities();
-                    }
-                    else
-                    {
-                        var city = FindCurrentCity();
-                        if (city != null && PlayerController.CityEntered == null) EnterCity(city);
-                    }
-                }
+        //                UpdateVisibleCities();
+        //            }
+        //            else
+        //            {
+        //                var city = FindCurrentCity();
+        //                if (city != null && PlayerController.CityEntered == null) EnterCity(city);
+        //            }
+        //        }
 
-                ProcessWorld();
-                UpdateHeader();
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Error while WorldController.Update(): {e}");
-            }
-        }
+        //        ProcessWorld();
+        //        UpdateHeader();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Debug.LogError($"Error while WorldController.Update(): {e}");
+        //    }
+        //}
 
-        public void ProcessWorld()
-        {
-            var now = DateTime.UtcNow;
+        //public void ProcessWorld()
+        //{
+        //    var now = DateTime.UtcNow;
 
-            if (LastWorldProcessedDateTime < DateTime.UtcNow.AddSeconds(-1))
-            {
-                LastWorldProcessedDateTime = now;
+        //    if (LastWorldProcessedDateTime < DateTime.UtcNow.AddSeconds(-1))
+        //    {
+        //        LastWorldProcessedDateTime = now;
 
-                ProcessWorldIteration++;
+        //        ProcessWorldIteration++;
 
-                WriteSystemLog($"Process world iteration={ProcessWorldIteration}");
+        //        WriteSystemLog($"Process world iteration={ProcessWorldIteration}");
 
-                foreach (var city in Cities) city.Process();
+        //        foreach (var city in Cities) city.Process();
 
-                Player.Process();
-            }
-        }
+        //        Player.Process();
+        //    }
+        //}
 
         private void LeaveCity(CityController city)
         {
             PlayerController.CityEntered = null;
 
-            WriteLog($"You leave {city.Name}");
+            WriteLog($"You leave {city.City.Name}");
         }
 
         private void EnterCity(CityController city)
         {
-            WriteLog($"You enter {city.Name}");
+            WriteLog($"You enter {city.City.Name}");
 
             PlayerController.CityEntered = city;
 
@@ -230,18 +234,18 @@ namespace Assets.Scripts.World
             //WriteLog($"You get {getTokens} tokens");
         }
 
-        private CityController FindCurrentCity()
-        {
-            foreach (var city in Cities)
-                if (Mathf.Abs(city.X - PlayerController.transform.position.x) < city.Size / 2 && Mathf.Abs(city.Y - PlayerController.transform.position.y) < city.Size / 2)
-                    return city;
+        //private CityController FindCurrentCity()
+        //{
+        //    foreach (var city in Cities)
+        //        if (Mathf.Abs(city.X - PlayerController.transform.position.x) < city.Size / 2 && Mathf.Abs(city.Y - PlayerController.transform.position.y) < city.Size / 2)
+        //            return city;
 
-            return null;
-        }
+        //    return null;
+        //}
 
         public void UpdateHeader()
         {
-            Header.text = $"TOKENS: {Player.Tokens}  BRAMINS: {Player.Bramins.Count}  WEIGHT:  {Player.BraminWeightSumm}";
+            //Header.text = $"TOKENS: {Player.Tokens}  BRAMINS: {Player.Bramins.Count}  WEIGHT:  {Player.BraminWeightSumm}";
         }
 
         private void WriteUserLog(string message)
