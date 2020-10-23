@@ -1,43 +1,25 @@
-﻿using Assets.Scripts.World;
+﻿using System;
+using Assets.Scripts.World;
+using CrvService.Shared.Contracts.Entities;
 using UnityEngine;
 
 namespace Assets.Scripts
 {
     public class PlayerController : MonoBehaviour
     {
-        [SerializeField]
-        public WorldController WorldController;
+        public IPlayer Player { get; private set; }
 
-        public CityController CityEntered { get; set; }
-
-        private bool Initialized { get; set; }
-
-        public void InitializePlayer()
+        public void UpdateFromServer(IPlayer player)
         {
-            //Debug.Log($"Initializing player");
-            Initialized = true;
+            var oldPlayer = Player;
+            Player = player;
+
+            if (oldPlayer == null || Math.Abs(Player.X - oldPlayer.X) > SharedValues.Tolerance || Math.Abs(Player.Y - oldPlayer.Y) > SharedValues.Tolerance) ChangeCoordinates();
         }
 
-        void OnTriggerEnter(Collider other)
+        private void ChangeCoordinates()
         {
-            Debug.Log("City entered");
-            CityController city = other.GetComponent<CityController>();
-            if (city != null)
-            {
-                Debug.Log("City entered");
-            }        
-        }
-
-        // Start is called before the first frame update
-        void Start()
-        {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
+            transform.position = new Vector3(Player.X, Player.Y, 0);
         }
     }
 }

@@ -96,11 +96,31 @@ namespace Assets.Scripts.World
             var responsePlayer = ToClientSideMapper.Map(response.Player);
 
             foreach (var city in responseWorld.Cities.Collection) MapCity(city);
+            MapPayer(responsePlayer);
 
             DestroyNotMappedWorldObjects();
 
             World = responseWorld;
             Player = responsePlayer;
+        }
+
+        private void MapPayer(IPlayer player)
+        {
+            if (!AllObjects.TryGetValue(player.Guid, out var item))
+            {
+                item = new AllObjectsDictionaryItem
+                {
+                    ItemFromServer = player
+                };
+
+                AllObjects.Add(player.Guid, item);
+
+                item.Controller = Instantiate(PlayerControllerBase, new Vector3(player.X, player.Y, 0), Quaternion.identity);
+            }
+
+            // ReSharper disable once PossibleNullReferenceException
+            (item.Controller as PlayerController).UpdateFromServer(player);
+            item.Updated = true;
         }
 
         private void MapCity(ICity city)
@@ -114,13 +134,27 @@ namespace Assets.Scripts.World
 
             // ReSharper disable once PossibleNullReferenceException
             (item.Controller as CityController).UpdateFromServer(city);
-
             item.Updated = true;
         }
 
         private void DestroyNotMappedWorldObjects()
         {
-            //todo
+            foreach (var item in AllObjects)
+                if (!item.Value.Updated)
+                    try
+                    {
+                        if (item.Value.Controller != null)
+                        {
+                            Destroy(item.Value.Controller);
+                            item.Value.Controller = null;
+                        }
+
+                        AllObjects.Remove(item.Key);
+                    }
+                    catch (Exception e)
+                    {
+                        WriteLog($"Error while DestroyNotMappedWorldObjects='{e}'");
+                    }
         }
 
 
@@ -208,31 +242,31 @@ namespace Assets.Scripts.World
         //    }
         //}
 
-        private void LeaveCity(CityController city)
-        {
-            PlayerController.CityEntered = null;
+        //private void LeaveCity(CityController city)
+        //{
+        //    PlayerController.CityEntered = null;
 
-            WriteLog($"You leave {city.City.Name}");
-        }
+        //    WriteLog($"You leave {city.City.Name}");
+        //}
 
-        private void EnterCity(CityController city)
-        {
-            WriteLog($"You enter {city.City.Name}");
+        //private void EnterCity(CityController city)
+        //{
+        //    WriteLog($"You enter {city.City.Name}");
 
-            PlayerController.CityEntered = city;
+        //    PlayerController.CityEntered = city;
 
-            EnterCityMenuDialog.ShowDialog(city);
+        //    EnterCityMenuDialog.ShowDialog(city);
 
-            //var getTokens = 0;
-            //foreach (var playerBramin in Player.Bramins)
-            //{
-            //    getTokens += playerBramin.Bag.Weight;
-            //    playerBramin.Bag.Weight = 0;
-            //}
+        //    //var getTokens = 0;
+        //    //foreach (var playerBramin in Player.Bramins)
+        //    //{
+        //    //    getTokens += playerBramin.Bag.Weight;
+        //    //    playerBramin.Bag.Weight = 0;
+        //    //}
 
-            //Player.Tokens += getTokens;
-            //WriteLog($"You get {getTokens} tokens");
-        }
+        //    //Player.Tokens += getTokens;
+        //    //WriteLog($"You get {getTokens} tokens");
+        //}
 
         //private CityController FindCurrentCity()
         //{
