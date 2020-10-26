@@ -4,8 +4,10 @@ using System.Linq;
 using Assets.Menu;
 using CrvService.Shared.Contracts.Dto;
 using CrvService.Shared.Contracts.Entities;
+using CrvService.Shared.Contracts.Entities.ClientCommands.Base;
 using CrvService.Shared.Logic;
 using CrvService.Shared.Logic.ClientSide;
+using CrvService.Shared.Logic.ClientSide.ClientCommands;
 using CrvService.Shared.Logic.ClientSide.Server;
 using TMPro;
 using UnityEngine;
@@ -54,6 +56,8 @@ namespace Assets.Scripts.World
         private IWorld World { get; set; }
         private IPlayer Player { get; set; }
 
+        private List<IClientCommand> CommandsToSend { get; set; } = new List<IClientCommand>();
+
         private void Start()
         {
             SettingsDialogController.LoadAndApplySettings();
@@ -76,7 +80,6 @@ namespace Assets.Scripts.World
             //UpdateHeader();
         }
 
-
         private void GetWorld()
         {
             var newInstanceFactory = new NewInstanceFactoryClientSide();
@@ -84,7 +87,7 @@ namespace Assets.Scripts.World
             var newWorldGenerator = new NewWorldGenerator(newInstanceFactory);
             CaravanServer = new CaravanServerClientSide(processorsProvider, newInstanceFactory, newWorldGenerator);
 
-            var response = CaravanServer.ProcessWorld(string.Empty, string.Empty);
+            var response = CaravanServer.ProcessWorld(string.Empty, null, null);
             ProcessServerResponse(response);
         }
 
@@ -185,7 +188,10 @@ namespace Assets.Scripts.World
 
         public void WorldClick()
         {
-            MovePlayer = new MovePlayer(PlayerController.transform.position, Camera.main.ScreenToWorldPoint(Input.mousePosition));
+            CommandsToSend.Add(new MovePlayerClientCommandClientSide()
+            {
+                ToX = 
+            });
         }
 
         //private void Update()
