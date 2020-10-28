@@ -25,7 +25,7 @@ namespace Assets.Scripts
 
             if (oldCity == null || City.Name != oldCity.Name) caption.gameObject.GetComponent<TextMesh>().text = City.Name;
 
-            var visible = player.VisibleCities.Contains(city.Guid);
+            var visible = true;//player.VisibleCities.Contains(city.Guid);
 
             if (oldCity == null || Visible != visible)
             {

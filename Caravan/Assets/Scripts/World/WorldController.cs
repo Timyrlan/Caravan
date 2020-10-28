@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Menu;
-using CrvService.Shared.Contracts.Dto;
 using CrvService.Shared.Contracts.Entities;
 using CrvService.Shared.Contracts.Entities.ClientCommands.Base;
 using CrvService.Shared.Logic.ClientSide;
@@ -19,34 +18,11 @@ namespace Assets.Scripts.World
 #pragma warning disable 649
 
 // ReSharper disable InconsistentNaming
-    public class AllObjectsDictionaryItem
-    {
-        public MonoBehaviour Controller { get; set; }
-        public bool Updated { get; set; }
-        public object ItemFromServer { get; set; }
-    }
 
-    public class CaravanServerFactory
-    {
-        public ICaravanServerConnector GetServer(bool local = false)
-        {
-            if (local)
-            {
-            }
-
-            return new CaravanServerHttpConnector();
-        }
-    }
 
     public class WorldController : MonoBehaviour
     {
-        public const float CameraWidth = 20;
-        public const float CameraHeight = 10;
-        public const float CameraBorder = 2;
-        public const float CityUnDensity = 2;
         public const float CoordinateAccuracy = 0.01f;
-
-        public const int InitializeCityCount = 10;
 
         private const int LogLength = 100;
 
@@ -56,14 +32,7 @@ namespace Assets.Scripts.World
 
         private List<string> Log { get; set; }
 
-        private List<CityController> Cities { get; } = new List<CityController>();
-
         private MovePlayer MovePlayer { get; set; }
-        //private Player Player { get; set; }
-
-        private DateTime LastWorldProcessedDateTime { get; set; }
-
-        private long ProcessWorldIteration { get; set; }
 
         private ICaravanServerConnector CaravanServer { get; set; }
 
@@ -74,59 +43,71 @@ namespace Assets.Scripts.World
 
         private bool WaitingServerResponse { get; set; }
 
-
-        private IEnumerator Start()
+        private void Start()
         {
-            var a = new ProcessWorldRequest {WorldGuid = "qqq", Player = new PlayerDto {MoveToX = 1}};
-            var b = JsonUtility.ToJson(a);
-            var c = JsonUtility.FromJson<ProcessWorldRequest>(b);
-            // var response = JsonUtility.FromJson<ProcessWorldResponse>(responseStr);
             SettingsDialogController.LoadAndApplySettings();
             MenuCanvas.gameObject.SetActive(true);
-            //BackgroundMenuCanvas.gameObject.SetActive(true);
             SettingsDialogController.gameObject.SetActive(false);
             InformationDialog.gameObject.SetActive(false);
             EnterCityMenuDialog.gameObject.SetActive(false);
+            MenuDialog.gameObject.SetActive(false);
             CityControllerBase.transform.position = new Vector3(99999, 0, 0);
             PlayerControllerBase.transform.position = new Vector3(99999, 0, 0);
-            //var factory = new CaravanServerFactory();
-            //CaravanServer = new CaravanServerHttpConnector();
-            CaravanServer = new CaravanServerConnectorClientSide();
 
-
-            Log = new List<string>();
-            //MovePlayer = null;
-
-            yield return GetWorld();
-
-            //InitializeCities();
-            //InitializePlayer();
-            //UpdateHeader();
+            MenuDialog.ShowDialog();
         }
 
         private void Update()
         {
             //if (GameStatus.Paused) return;
-
-            try
-            {
-                if (!WaitingServerResponse && lastPingDateTimeUtc.AddSeconds(1) < DateTime.UtcNow)
+            if (CaravanServer != null)
+                try
                 {
-                    var request = new ProcessWorldRequestClientSideEntity
+                    if (!WaitingServerResponse && lastPingDateTimeUtc.AddSeconds(1) < DateTime.UtcNow)
                     {
-                        WorldGuid = World?.Guid,
-                        Player = Player,
-                        ClientCommands = CommandsToSend.ToArray()
-                    };
+                        var request = new ProcessWorldRequestClientSideEntity
+                        {
+                            WorldGuid = World?.Guid,
+                            Player = Player,
+                            ClientCommands = CommandsToSend.ToArray()
+                        };
 
-                    StartCoroutine(CaravanServer.ProcessWorld(request, ProcessServerResponse));
+                        StartCoroutine(CaravanServer.ProcessWorld(request, ProcessServerResponse));
+                    }
+
+                    ProcessMovePlayer();
                 }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Error while WorldController.Update(): {e}");
+                }
+        }
 
-                ProcessMovePlayer();
-            }
-            catch (Exception e)
+        public void OnStartLocalGameButton()
+        {
+            if (CaravanServer == null)
             {
-                Debug.LogError($"Error while WorldController.Update(): {e}");
+                CaravanServer = new CaravanServerConnectorClientSide();
+
+                Log = new List<string>();
+
+                StartCoroutine(GetWorld());
+
+                MenuDialog.CloseDialog();
+            }
+        }
+
+        public void OnStartOnlineGameButton()
+        {
+            if (CaravanServer == null)
+            {
+                CaravanServer = new CaravanServerHttpConnector();
+
+                Log = new List<string>();
+
+                StartCoroutine(GetWorld());
+
+                MenuDialog.CloseDialog();
             }
         }
 
@@ -313,11 +294,6 @@ namespace Assets.Scripts.World
             });
         }
 
-        //public void WorldClick()
-        //{
-        //    MovePlayer = new MovePlayer(PlayerController.transform.position, );
-        //}
-
 
         //private void Update()
         //{
@@ -465,6 +441,8 @@ namespace Assets.Scripts.World
         [SerializeField] private InformationDialogController InformationDialog;
 
         [SerializeField] private EnterCityMenuDialogController EnterCityMenuDialog;
+
+        [SerializeField] private MenuDialogController MenuDialog;
 
         #endregion
     }

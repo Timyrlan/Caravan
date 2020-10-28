@@ -21,7 +21,8 @@ namespace Assets.Scripts.World
             var requestBody = ToDtoMapper.Map(request);
             var requestString = JsonConvert.SerializeObject(requestBody);
 
-            var unityWebRequest = new UnityWebRequest("http://localhost:8066/ping", "POST");
+            var unityWebRequest = new UnityWebRequest("http://192.168.0.101:8066/ping", "POST");
+            //var unityWebRequest = new UnityWebRequest("http://localhost:8066/ping", "POST");
             var bodyRaw = Encoding.UTF8.GetBytes(requestString);
             unityWebRequest.uploadHandler = new UploadHandlerRaw(bodyRaw);
             unityWebRequest.downloadHandler = new DownloadHandlerBuffer();
