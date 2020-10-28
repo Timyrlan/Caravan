@@ -75,7 +75,9 @@ namespace Assets.Scripts.World
         private IWorld World { get; set; }
         private IPlayer Player { get; set; }
 
-        private List<IClientCommand> CommandsToSend { get; } = new List<IClientCommand>();
+        private List<IClientCommand> CommandsToSend { get; set; } = new List<IClientCommand>();
+
+        private bool WaitingServerResponse { get; set; }
 
 
         private IEnumerator Start()
@@ -112,21 +114,20 @@ namespace Assets.Scripts.World
 
             try
             {
-                //if (lastPingDateTimeUtc.AddSeconds(1) < DateTime.UtcNow)
-                //{
-                //    var request = new ProcessWorldRequestClientSideEntity
-                //    {
-                //        WorldGuid = World?.Guid,
-                //        Player = Player,
-                //        ClientCommands = CommandsToSend.ToArray()
-                //    };
 
-                //    var response = CaravanServer.ProcessWorld(request);
-                //    CommandsToSend = new List<IClientCommand>();
-                //    ProcessServerResponse(response);
-                //}
+                if (!WaitingServerResponse && lastPingDateTimeUtc.AddSeconds(1) < DateTime.UtcNow)
+                {
+                    var request = new ProcessWorldRequestClientSideEntity
+                    {
+                        WorldGuid = World?.Guid,
+                        Player = Player,
+                        ClientCommands = CommandsToSend.ToArray()
+                    };
 
-                //ProcessMovePlayer();
+                    StartCoroutine(CaravanServer.ProcessWorld(request, ProcessServerResponse));
+                }
+
+                ProcessMovePlayer();
             }
             catch (Exception e)
             {
@@ -156,30 +157,50 @@ namespace Assets.Scripts.World
                 Player = Player,
                 ClientCommands = CommandsToSend.ToArray()
             };
+
+            WaitingServerResponse = true;
+
             yield return CaravanServer.ProcessWorld(request, ProcessServerResponse);
-            ;
         }
 
-        public void ProcessServerResponse(IProcessWorldResponse response)
+        private void RemoveSendedCommands(IProcessWorldRequest request)
         {
-            foreach (var obj in AllObjects) obj.Value.Updated = false;
+            var commandsGuids = request.ClientCommands.Select(c => c.Guid).ToArray();
+            var resultCommands = new List<IClientCommand>();
+            foreach (var clientCommand in CommandsToSend)
+                if (!commandsGuids.Contains(clientCommand.Guid))
+                    resultCommands.Add(clientCommand);
+
+            CommandsToSend = resultCommands;
+        }
 
 
-            foreach (var city in response.World.Cities.Collection) MapCity(city);
-            MapPayer(response.Player);
-
-            DestroyNotMappedWorldObjects();
-
-            World = response.World;
-            Player = response.Player;
-
-            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-            if (Player.IsMoving)
-                MovePlayer = new MovePlayer(new Vector3(Player.X, Player.Y), new Vector3(Player.MoveToX, Player.MoveToY));
-            else
-                MovePlayer = null;
-
+        public void ProcessServerResponse(IProcessWorldRequest request, IProcessWorldResponse response)
+        {
+            WaitingServerResponse = false;
             lastPingDateTimeUtc = DateTime.UtcNow;
+
+            if (response != null)
+            {
+                RemoveSendedCommands(request);
+
+                foreach (var obj in AllObjects) obj.Value.Updated = false;
+
+
+                foreach (var city in response.World.Cities.Collection) MapCity(city);
+                MapPayer(response.Player);
+
+                DestroyNotMappedWorldObjects();
+
+                World = response.World;
+                Player = response.Player;
+
+                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                if (Player.IsMoving)
+                    MovePlayer = new MovePlayer(new Vector3(Player.X, Player.Y), new Vector3(Player.MoveToX, Player.MoveToY));
+                else
+                    MovePlayer = null;
+            }
         }
 
         private void MapPayer(IPlayer player)
@@ -194,6 +215,7 @@ namespace Assets.Scripts.World
                 AllObjects.Add(player.Guid, item);
 
                 item.Controller = Instantiate(PlayerControllerBase, new Vector3(player.X, player.Y, 0), Quaternion.identity);
+                PlayerController = item.Controller as PlayerController;
             }
 
             // ReSharper disable once PossibleNullReferenceException
@@ -217,7 +239,7 @@ namespace Assets.Scripts.World
 
         private void DestroyNotMappedWorldObjects()
         {
-            foreach (var item in AllObjects)
+            foreach (var item in AllObjects.ToArray())
                 if (!item.Value.Updated)
                     try
                     {
@@ -264,7 +286,7 @@ namespace Assets.Scripts.World
         public void WorldClick()
         {
             var moveTo = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            CommandsToSend.Add(new MovePlayerClientCommandClientSide
+            CommandsToSend.Add(new MovePlayerClientCommandClientSideEntity
             {
                 ToX = moveTo.x,
                 ToY = moveTo.y

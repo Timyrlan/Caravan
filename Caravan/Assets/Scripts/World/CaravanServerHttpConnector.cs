@@ -14,9 +14,9 @@ using UnityEngine.Networking;
 
 namespace Assets.Scripts.World
 {
-    public class CaravanServerHttpConnector : ICaravanServerConnector
+    public class CaravanServerHttpConnector : ICaravanServerConnector 
     {
-        public IEnumerator ProcessWorld(IProcessWorldRequest request, Action<IProcessWorldResponse> callback)
+        public IEnumerator ProcessWorld(IProcessWorldRequest request, Action<IProcessWorldRequest,IProcessWorldResponse> callback)
         {
             var requestBody = ToDtoMapper.Map(request);
             var requestString = JsonConvert.SerializeObject(requestBody);
@@ -31,7 +31,8 @@ namespace Assets.Scripts.World
 
             if (unityWebRequest.isNetworkError || unityWebRequest.isHttpError)
             {
-                Debug.LogError($"Ping error. isNetworkError='{unityWebRequest.isNetworkError}', isHttpError='{unityWebRequest.isHttpError}'");
+                Debug.LogError($"Ping error. isNetworkError='{unityWebRequest.isNetworkError}', isHttpError='{unityWebRequest.isHttpError}', error:'{unityWebRequest.error}'");
+                callback(request,null);
             }
             else
             {
@@ -47,9 +48,11 @@ namespace Assets.Scripts.World
                 {
                     Debug.Log("Ping ok'");
                     var result = ToClientSideMapper.Map(response);
-                    callback(result);
+                    callback(request,result);
                 }
             }
         }
+
+        
     }
 }

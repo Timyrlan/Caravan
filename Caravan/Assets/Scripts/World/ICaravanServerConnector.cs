@@ -6,6 +6,6 @@ namespace Assets.Scripts.World
 {
     public interface ICaravanServerConnector
     {
-        IEnumerator ProcessWorld(IProcessWorldRequest request, Action<IProcessWorldResponse> callback);
+        IEnumerator ProcessWorld(IProcessWorldRequest request, Action<IProcessWorldRequest, IProcessWorldResponse> callback);
     }
 }
