@@ -1,12 +1,14 @@
 ScriptsOnlyBuild:
   usedScripts:
     Assembly-CSharp.dll:
+    - Assets.Menu.EnterCityMenuDialogController
     - Assets.Menu.InformationDialogController
+    - Assets.Menu.MenuDialogController
+    - Assets.Menu.SettingsDialogController
     - Assets.Scripts.CityController
     - Assets.Scripts.DesertController
     - Assets.Scripts.PlayerController
     - Assets.Scripts.World.WorldController
-    - MenuController
     - UIController
     Unity.2D.Animation.Editor.dll:
     - UnityEditor.U2D.Animation.BoneGizmo
@@ -27,7 +29,6 @@ ScriptsOnlyBuild:
     UnityEditor.TestRunner.dll:
     - TestRunner.Callbacks.WindowResultUpdaterDataHolder
     - UnityEditor.TestTools.TestRunner.Api.CallbacksHolder
-    - UnityEditor.TestTools.TestRunner.CommandLineTest.RunData
     - UnityEditor.TestTools.TestRunner.TestListCacheData
     - UnityEditor.TestTools.TestRunner.TestRun.TestJobDataHolder
     - UnityEditor.TestTools.TestRunner.TestRunnerWindow
@@ -41,6 +42,8 @@ ScriptsOnlyBuild:
     - UnityEngine.UI.Mask
     - UnityEngine.UI.ScrollRect
     - UnityEngine.UI.Scrollbar
+    - UnityEngine.UI.Text
+    - UnityEngine.UI.Toggle
   sceneClasses:
     Assets/Scenes/MainScene.unity:
     - Class: 1
@@ -70,47 +73,55 @@ ScriptsOnlyBuild:
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11200}
+      Script: {instanceID: 11202}
     - Class: 114
-      Script: {instanceID: 11496}
+      Script: {instanceID: 11494}
     - Class: 114
-      Script: {instanceID: 11546}
+      Script: {instanceID: 11498}
     - Class: 114
-      Script: {instanceID: 12040}
+      Script: {instanceID: 11548}
     - Class: 114
-      Script: {instanceID: 12212}
+      Script: {instanceID: 12042}
     - Class: 114
-      Script: {instanceID: 12264}
+      Script: {instanceID: 12216}
     - Class: 114
-      Script: {instanceID: 12540}
+      Script: {instanceID: 12268}
     - Class: 114
-      Script: {instanceID: 12566}
+      Script: {instanceID: 12544}
     - Class: 114
-      Script: {instanceID: 12658}
+      Script: {instanceID: 12570}
     - Class: 114
-      Script: {instanceID: 12924}
+      Script: {instanceID: 12662}
     - Class: 114
-      Script: {instanceID: 13058}
+      Script: {instanceID: 12926}
     - Class: 114
-      Script: {instanceID: 13270}
+      Script: {instanceID: 13060}
     - Class: 114
-      Script: {instanceID: 13288}
+      Script: {instanceID: 13274}
     - Class: 114
-      Script: {instanceID: 13590}
+      Script: {instanceID: 13292}
     - Class: 114
-      Script: {instanceID: 13692}
+      Script: {instanceID: 13332}
     - Class: 114
-      Script: {instanceID: 13702}
+      Script: {instanceID: 13360}
     - Class: 114
-      Script: {instanceID: 13756}
+      Script: {instanceID: 13594}
     - Class: 114
-      Script: {instanceID: 13972}
+      Script: {instanceID: 13698}
     - Class: 114
-      Script: {instanceID: 14314}
+      Script: {instanceID: 13708}
     - Class: 114
-      Script: {instanceID: 14366}
+      Script: {instanceID: 13762}
     - Class: 114
-      Script: {instanceID: 16276}
+      Script: {instanceID: 13978}
+    - Class: 114
+      Script: {instanceID: 14140}
+    - Class: 114
+      Script: {instanceID: 14318}
+    - Class: 114
+      Script: {instanceID: 14338}
+    - Class: 114
+      Script: {instanceID: 14370}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -128,6 +139,8 @@ ScriptsOnlyBuild:
     - Class: 223
       Script: {instanceID: 0}
     - Class: 224
+      Script: {instanceID: 0}
+    - Class: 225
       Script: {instanceID: 0}
   scriptHashData:
   - hash:
@@ -384,7 +397,7 @@ ScriptsOnlyBuild:
     className: SignalTrack
   - hash:
       serializedVersion: 2
-      Hash: d10930450dc10dd14f8e07b32489478d
+      Hash: add5aac1495ea69924aba334c8362232
     assemblyName: Assembly-CSharp.dll
     namespaceName: Assets.Scripts
     className: CityController
@@ -426,7 +439,7 @@ ScriptsOnlyBuild:
     className: RawImage
   - hash:
       serializedVersion: 2
-      Hash: 329e20c0827eccc94e3fa03ed2f5427b
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
     assemblyName: Assembly-CSharp.dll
     namespaceName: Assets.Scripts
     className: PlayerController
@@ -492,6 +505,18 @@ ScriptsOnlyBuild:
     className: Physics2DRaycaster
   - hash:
       serializedVersion: 2
+      Hash: 8a8c837634768f3119e5ba286cd2e006
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: Assets.Menu
+    className: SettingsDialogController
+  - hash:
+      serializedVersion: 2
+      Hash: d4c564bd1f6b13aa8f6af2c72f822c20
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: Assets.Menu
+    className: MenuDialogController
+  - hash:
+      serializedVersion: 2
       Hash: c1933cc0a2f4ff6eb13333347497beb3
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
@@ -550,6 +575,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.TextMeshPro.dll
     namespaceName: TMPro
     className: TMP_StyleSheet
+  - hash:
+      serializedVersion: 2
+      Hash: b0a953a74eb6a548211db0286f4538a7
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: Assets.Menu
+    className: EnterCityMenuDialogController
   - hash:
       serializedVersion: 2
       Hash: 8cd1cbba27f3cb1717254f668e9e0d5a
@@ -636,7 +667,7 @@ ScriptsOnlyBuild:
     className: Slider
   - hash:
       serializedVersion: 2
-      Hash: 4e11b184a827b4bd07b18ef2aedb8cee
+      Hash: 4b6b3846fc029b58820961208a8452be
     assemblyName: Assembly-CSharp.dll
     namespaceName: Assets.Scripts.World
     className: WorldController
@@ -652,12 +683,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
     className: PlayableTrack
-  - hash:
-      serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: MenuController
   platform: 5
   scenePathNames:
   - Assets/Scenes/MainScene.unity
