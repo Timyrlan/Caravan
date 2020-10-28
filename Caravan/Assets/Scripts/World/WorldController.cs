@@ -26,22 +26,17 @@ namespace Assets.Scripts.World
         public object ItemFromServer { get; set; }
     }
 
-    //public class CaravanServerFactory
-    //{
-    //    public ICaravanServer GetServer(bool local = false)
-    //    {
-    //        if (local)
-    //        {
-    //            var newInstanceFactory = new NewInstanceFactoryClientSide();
-    //            var processorsProvider = new ProcessorsProvider(newInstanceFactory);
-    //            var newWorldGenerator = new NewWorldGenerator(newInstanceFactory);
-    //            ICaravanServer caravanServer = new CaravanServerClientSide(processorsProvider, newInstanceFactory, newWorldGenerator);
-    //            return caravanServer;
-    //        }
+    public class CaravanServerFactory
+    {
+        public ICaravanServerConnector GetServer(bool local = false)
+        {
+            if (local)
+            {
+            }
 
-    //        return new CaravanServerHttpConnector();
-    //    }
-    //}
+            return new CaravanServerHttpConnector();
+        }
+    }
 
     public class WorldController : MonoBehaviour
     {
@@ -95,7 +90,8 @@ namespace Assets.Scripts.World
             CityControllerBase.transform.position = new Vector3(99999, 0, 0);
             PlayerControllerBase.transform.position = new Vector3(99999, 0, 0);
             //var factory = new CaravanServerFactory();
-            CaravanServer = new CaravanServerHttpConnector();
+            //CaravanServer = new CaravanServerHttpConnector();
+            CaravanServer = new CaravanServerConnectorClientSide();
 
 
             Log = new List<string>();
@@ -114,7 +110,6 @@ namespace Assets.Scripts.World
 
             try
             {
-
                 if (!WaitingServerResponse && lastPingDateTimeUtc.AddSeconds(1) < DateTime.UtcNow)
                 {
                     var request = new ProcessWorldRequestClientSideEntity
@@ -151,21 +146,19 @@ namespace Assets.Scripts.World
 
         private IEnumerator GetWorld()
         {
-            var request = new ProcessWorldRequestClientSideEntity
+            var request = new GetNewWorldRequestClientSideEntity
             {
-                WorldGuid = World?.Guid,
-                Player = Player,
-                ClientCommands = CommandsToSend.ToArray()
+                Player = Player
             };
 
             WaitingServerResponse = true;
 
-            yield return CaravanServer.ProcessWorld(request, ProcessServerResponse);
+            yield return CaravanServer.GetNewWorld(request, ProcessServerResponse);
         }
 
-        private void RemoveSendedCommands(IProcessWorldRequest request)
+        private void RemoveSendedCommands(IClientCommand[] commands)
         {
-            var commandsGuids = request.ClientCommands.Select(c => c.Guid).ToArray();
+            var commandsGuids = commands.Select(c => c.Guid).ToArray();
             var resultCommands = new List<IClientCommand>();
             foreach (var clientCommand in CommandsToSend)
                 if (!commandsGuids.Contains(clientCommand.Guid))
@@ -182,12 +175,39 @@ namespace Assets.Scripts.World
 
             if (response != null)
             {
-                RemoveSendedCommands(request);
+                RemoveSendedCommands(request.ClientCommands);
 
                 foreach (var obj in AllObjects) obj.Value.Updated = false;
 
 
-                foreach (var city in response.World.Cities.Collection) MapCity(city);
+                foreach (var city in response.World.Cities.Collection) MapCity(city, response.Player);
+                MapPayer(response.Player);
+
+                DestroyNotMappedWorldObjects();
+
+                World = response.World;
+                Player = response.Player;
+
+                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                if (Player.IsMoving)
+                    MovePlayer = new MovePlayer(new Vector3(Player.X, Player.Y), new Vector3(Player.MoveToX, Player.MoveToY));
+                else
+                    MovePlayer = null;
+            }
+        }
+
+        public void ProcessServerResponse(IGetNewWorldRequest request, IProcessWorldResponse response)
+        {
+            WaitingServerResponse = false;
+            lastPingDateTimeUtc = DateTime.UtcNow;
+
+            if (response != null)
+            {
+                CommandsToSend = new List<IClientCommand>();
+
+                foreach (var obj in AllObjects) obj.Value.Updated = false;
+
+                foreach (var city in response.World.Cities.Collection) MapCity(city, response.Player);
                 MapPayer(response.Player);
 
                 DestroyNotMappedWorldObjects();
@@ -223,7 +243,7 @@ namespace Assets.Scripts.World
             item.Updated = true;
         }
 
-        private void MapCity(ICity city)
+        private void MapCity(ICity city, IPlayer player)
         {
             if (!AllObjects.TryGetValue(city.Guid, out var item))
             {
@@ -233,7 +253,7 @@ namespace Assets.Scripts.World
             }
 
             // ReSharper disable once PossibleNullReferenceException
-            (item.Controller as CityController).UpdateFromServer(city);
+            (item.Controller as CityController).UpdateFromServer(city, player);
             item.Updated = true;
         }
 

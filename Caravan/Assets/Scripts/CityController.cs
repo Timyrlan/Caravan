@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Assets.Scripts.World;
 using CrvService.Shared.Contracts.Entities;
 using UnityEngine;
@@ -14,8 +15,9 @@ namespace Assets.Scripts
 
         public ICity City { get; private set; }
 
+        public bool Visible { get; set; }
 
-        public void UpdateFromServer(ICity city)
+        public void UpdateFromServer(ICity city, IPlayer player)
         {
             var caption = transform.Find("Caption");
             var oldCity = City;
@@ -23,7 +25,13 @@ namespace Assets.Scripts
 
             if (oldCity == null || City.Name != oldCity.Name) caption.gameObject.GetComponent<TextMesh>().text = City.Name;
 
-            if (oldCity == null || City.Visible != oldCity.Visible) gameObject.SetActive(City.Visible);
+            var visible = player.VisibleCities.Contains(city.Guid);
+
+            if (oldCity == null || Visible != visible)
+            {
+                Visible = visible;
+                gameObject.SetActive(Visible);
+            }
 
             if (oldCity == null || Math.Abs(City.X - oldCity.X) > SharedValues.Tolerance || Math.Abs(City.Y - oldCity.Y) > SharedValues.Tolerance || Math.Abs(City.Size - oldCity.Size) > SharedValues.Tolerance) ChangeSize();
         }
