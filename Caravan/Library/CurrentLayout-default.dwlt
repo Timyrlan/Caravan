@@ -21,7 +21,7 @@ MonoBehaviour:
   m_ShowMode: 4
   m_Title: 
   m_RootView: {fileID: 6}
-  m_MinSize: {x: 875, y: 542}
+  m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
   m_Maximized: 1
 --- !u!114 &2
@@ -48,7 +48,7 @@ MonoBehaviour:
   m_MinSize: {x: 678, y: 492}
   m_MaxSize: {x: 14001, y: 14042}
   vertical: 0
-  controlID: 61
+  controlID: 126
 --- !u!114 &3
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -92,10 +92,10 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 451
+    width: 384
     height: 787
-  m_MinSize: {x: 201, y: 221}
-  m_MaxSize: {x: 4001, y: 4021}
+  m_MinSize: {x: 200, y: 200}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 16}
   m_Panes:
   - {fileID: 12}
@@ -220,7 +220,7 @@ MonoBehaviour:
   m_MinSize: {x: 403, y: 492}
   m_MaxSize: {x: 10001, y: 14042}
   vertical: 1
-  controlID: 62
+  controlID: 84
 --- !u!114 &10
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -261,9 +261,9 @@ MonoBehaviour:
   m_Children: []
   m_Position:
     serializedVersion: 2
-    x: 451
+    x: 384
     y: 0
-    width: 1590
+    width: 1657
     height: 787
   m_MinSize: {x: 202, y: 221}
   m_MaxSize: {x: 4002, y: 4021}
@@ -296,11 +296,11 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 73
-    width: 450
+    width: 383
     height: 766
   m_ViewDataDictionary: {fileID: 0}
   m_Spl:
-    ID: 143
+    ID: 20374
     splitterInitialOffset: 0
     currentActiveSplitter: -1
     realSizes: 0a020000ae000000
@@ -332,171 +332,6 @@ MonoBehaviour:
       categories: []
       parentId: 
       parentUniqueId: 
-    - id: 1007
-      uniqueId: '[LogicScriptsTests.dll][suite]'
-      name: LogicScriptsTests.dll
-      fullName: C:/Projects/Unity/Projects/Caravan2/Caravan/Library/ScriptAssemblies/LogicScriptsTests.dll
-      resultStatus: 0
-      duration: 0
-      messages: 
-      output: 
-      stacktrace: 
-      notRunnable: 0
-      ignoredOrSkipped: 0
-      description: 
-      isSuite: 1
-      categories: []
-      parentId: 1000
-      parentUniqueId: '[Caravan][suite]'
-    - id: 1008
-      uniqueId: LogicScriptsTests.dll/[Assets][suite]
-      name: Assets
-      fullName: Assets
-      resultStatus: 0
-      duration: 0
-      messages: 
-      output: 
-      stacktrace: 
-      notRunnable: 0
-      ignoredOrSkipped: 0
-      description: 
-      isSuite: 1
-      categories: []
-      parentId: 1007
-      parentUniqueId: '[LogicScriptsTests.dll][suite]'
-    - id: 1009
-      uniqueId: LogicScriptsTests.dll/Assets/[LogicScripts][suite]
-      name: LogicScripts
-      fullName: Assets.LogicScripts
-      resultStatus: 0
-      duration: 0
-      messages: 
-      output: 
-      stacktrace: 
-      notRunnable: 0
-      ignoredOrSkipped: 0
-      description: 
-      isSuite: 1
-      categories: []
-      parentId: 1008
-      parentUniqueId: LogicScriptsTests.dll/[Assets][suite]
-    - id: 1010
-      uniqueId: LogicScriptsTests.dll/Assets/LogicScripts/[LogicScriptsTests][suite]
-      name: LogicScriptsTests
-      fullName: Assets.LogicScripts.LogicScriptsTests
-      resultStatus: 0
-      duration: 0
-      messages: 
-      output: 
-      stacktrace: 
-      notRunnable: 0
-      ignoredOrSkipped: 0
-      description: 
-      isSuite: 1
-      categories: []
-      parentId: 1009
-      parentUniqueId: LogicScriptsTests.dll/Assets/[LogicScripts][suite]
-    - id: 1001
-      uniqueId: LogicScriptsTests.dll/Assets/LogicScripts/LogicScriptsTests/[LogicScriptsTests][suite]
-      name: LogicScriptsTests
-      fullName: Assets.LogicScripts.LogicScriptsTests.LogicScriptsTests
-      resultStatus: 0
-      duration: 0
-      messages: 
-      output: 
-      stacktrace: 
-      notRunnable: 0
-      ignoredOrSkipped: 0
-      description: 
-      isSuite: 1
-      categories: []
-      parentId: 1010
-      parentUniqueId: LogicScriptsTests.dll/Assets/LogicScripts/[LogicScriptsTests][suite]
-    - id: 1003
-      uniqueId: LogicScriptsTests.dll/Assets/LogicScripts/LogicScriptsTests/LogicScriptsTests/[LogicScriptsTests][Assets.LogicScripts.LogicScriptsTests.LogicScriptsTests.FactoryAllowAddWrightCargo]
-      name: FactoryAllowAddWrightCargo
-      fullName: Assets.LogicScripts.LogicScriptsTests.LogicScriptsTests.FactoryAllowAddWrightCargo
-      resultStatus: 0
-      duration: 0
-      messages: 
-      output: 
-      stacktrace: 
-      notRunnable: 0
-      ignoredOrSkipped: 0
-      description: 
-      isSuite: 0
-      categories:
-      - Uncategorized
-      parentId: 1001
-      parentUniqueId: LogicScriptsTests.dll/Assets/LogicScripts/LogicScriptsTests/[LogicScriptsTests][suite]
-    - id: 1002
-      uniqueId: LogicScriptsTests.dll/Assets/LogicScripts/LogicScriptsTests/LogicScriptsTests/[LogicScriptsTests][Assets.LogicScripts.LogicScriptsTests.LogicScriptsTests.FactoryNotAllowAddWrongCargo]
-      name: FactoryNotAllowAddWrongCargo
-      fullName: Assets.LogicScripts.LogicScriptsTests.LogicScriptsTests.FactoryNotAllowAddWrongCargo
-      resultStatus: 0
-      duration: 0
-      messages: 
-      output: 
-      stacktrace: 
-      notRunnable: 0
-      ignoredOrSkipped: 0
-      description: 
-      isSuite: 0
-      categories:
-      - Uncategorized
-      parentId: 1001
-      parentUniqueId: LogicScriptsTests.dll/Assets/LogicScripts/LogicScriptsTests/[LogicScriptsTests][suite]
-    - id: 1006
-      uniqueId: LogicScriptsTests.dll/Assets/LogicScripts/LogicScriptsTests/LogicScriptsTests/[LogicScriptsTests][Assets.LogicScripts.LogicScriptsTests.LogicScriptsTests.LivingHouseTest_Process]
-      name: LivingHouseTest_Process
-      fullName: Assets.LogicScripts.LogicScriptsTests.LogicScriptsTests.LivingHouseTest_Process
-      resultStatus: 0
-      duration: 0
-      messages: 
-      output: 
-      stacktrace: 
-      notRunnable: 0
-      ignoredOrSkipped: 0
-      description: 
-      isSuite: 0
-      categories:
-      - Uncategorized
-      parentId: 1001
-      parentUniqueId: LogicScriptsTests.dll/Assets/LogicScripts/LogicScriptsTests/[LogicScriptsTests][suite]
-    - id: 1004
-      uniqueId: LogicScriptsTests.dll/Assets/LogicScripts/LogicScriptsTests/LogicScriptsTests/[LogicScriptsTests][Assets.LogicScripts.LogicScriptsTests.LogicScriptsTests.SaltEvaporationFactoryTest_Process]
-      name: SaltEvaporationFactoryTest_Process
-      fullName: Assets.LogicScripts.LogicScriptsTests.LogicScriptsTests.SaltEvaporationFactoryTest_Process
-      resultStatus: 0
-      duration: 0
-      messages: 
-      output: 
-      stacktrace: 
-      notRunnable: 0
-      ignoredOrSkipped: 0
-      description: 
-      isSuite: 0
-      categories:
-      - Uncategorized
-      parentId: 1001
-      parentUniqueId: LogicScriptsTests.dll/Assets/LogicScripts/LogicScriptsTests/[LogicScriptsTests][suite]
-    - id: 1005
-      uniqueId: LogicScriptsTests.dll/Assets/LogicScripts/LogicScriptsTests/LogicScriptsTests/[LogicScriptsTests][Assets.LogicScripts.LogicScriptsTests.LogicScriptsTests.SaltWaterWellTest_Process]
-      name: SaltWaterWellTest_Process
-      fullName: Assets.LogicScripts.LogicScriptsTests.LogicScriptsTests.SaltWaterWellTest_Process
-      resultStatus: 0
-      duration: 0
-      messages: 
-      output: 
-      stacktrace: 
-      notRunnable: 0
-      ignoredOrSkipped: 0
-      description: 
-      isSuite: 0
-      categories:
-      - Uncategorized
-      parentId: 1001
-      parentUniqueId: LogicScriptsTests.dll/Assets/LogicScripts/LogicScriptsTests/[LogicScriptsTests][suite]
     m_ResultText: FactoryNotAllowAddWrongCargo (0,000s)
     m_ResultStacktrace: 
     m_TestListState:
@@ -601,9 +436,9 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 451
+    x: 384
     y: 73
-    width: 1588
+    width: 1655
     height: 766
   m_ViewDataDictionary: {fileID: 0}
 --- !u!114 &14
@@ -656,9 +491,9 @@ MonoBehaviour:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: c83b0000
-    m_LastClickedID: 15304
-    m_ExpandedIDs: 00000000c83b0000ca3b0000cc3b0000ce3b0000d03b0000d23b0000d43b0000d63b0000d83b0000da3b000000ca9a3b
+    m_SelectedIDs: ca3b0000
+    m_LastClickedID: 15306
+    m_ExpandedIDs: 00000000ca3b0000cc3b0000ce3b0000d03b0000d23b0000d43b0000d63b0000d83b0000da3b0000dc3b000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -686,7 +521,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000c83b0000ca3b0000cc3b0000ce3b0000d03b0000d23b0000d43b0000d63b0000d83b0000da3b0000
+    m_ExpandedIDs: 00000000ca3b0000cc3b0000ce3b0000d03b0000d23b0000d43b0000d63b0000d83b0000da3b0000dc3b0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -803,7 +638,7 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 73
-    width: 450
+    width: 383
     height: 766
   m_ViewDataDictionary: {fileID: 0}
   m_SceneHierarchy:
@@ -811,21 +646,21 @@ MonoBehaviour:
       scrollPos: {x: 0, y: 0}
       m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: 5efbffff
+      m_ExpandedIDs: d622fcffe822fcff9223fcffbe25fcffd025fcffdc25fcff2026fcff3226fcffdc26fcffe669fcfff869fcff046afcff366afcff486afcfff26afcff886cfcff9c6cfcff466dfcffcef8fcffe2f8fcffeef8fcff1cfcfcff30fcfcff3cfcfcffd6fcfcffeafcfcff94fdfcff9826fdff4c31fdff5efbffff143900006439000084390000e63900000ecd0000e2ce00008ed60000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
-        m_Name: 
-        m_OriginalName: 
+        m_Name: Main Camera
+        m_OriginalName: Main Camera
         m_EditFieldRect:
           serializedVersion: 2
           x: 0
           y: 0
           width: 0
           height: 0
-        m_UserData: 0
+        m_UserData: 54952
         m_IsWaitingForDelay: 0
         m_IsRenaming: 0
-        m_OriginalEventType: 11
+        m_OriginalEventType: 0
         m_IsRenamingFilename: 0
         m_ClientGUIView: {fileID: 4}
       m_SearchString: 
@@ -856,9 +691,9 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 451
+    x: 384
     y: 73
-    width: 1588
+    width: 1655
     height: 766
   m_ViewDataDictionary: {fileID: 0}
   m_ShowContextualTools: 0
@@ -871,9 +706,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 0.33318922, y: -0.18666062, z: -3453.8652}
+    m_Target: {x: 18.442133, y: 7.761396, z: -66.261604}
     speed: 2
-    m_Value: {x: 0.33318922, y: -0.18666062, z: -3453.8652}
+    m_Value: {x: 18.442133, y: 7.761396, z: -66.261604}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -923,9 +758,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 5.934336
+    m_Target: 25.904978
     speed: 2
-    m_Value: 5.934336
+    m_Value: 25.904978
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -971,9 +806,9 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 451
+    x: 384
     y: 73
-    width: 1588
+    width: 1655
     height: 766
   m_ViewDataDictionary: {fileID: 0}
   m_SerializedViewNames: []
@@ -984,7 +819,7 @@ MonoBehaviour:
   m_ShowGizmos: 0
   m_TargetDisplay: 0
   m_ClearColor: {r: 0, g: 0, b: 0, a: 0}
-  m_TargetSize: {x: 1588, y: 745}
+  m_TargetSize: {x: 1655, y: 745}
   m_TextureFilterMode: 0
   m_TextureHideFlags: 61
   m_RenderIMGUI: 1
@@ -999,8 +834,8 @@ MonoBehaviour:
     m_VRangeLocked: 0
     hZoomLockedByDefault: 0
     vZoomLockedByDefault: 0
-    m_HBaseRangeMin: -794
-    m_HBaseRangeMax: 794
+    m_HBaseRangeMin: -827.5
+    m_HBaseRangeMax: 827.5
     m_VBaseRangeMin: -372.5
     m_VBaseRangeMax: 372.5
     m_HAllowExceedBaseRangeMin: 1
@@ -1011,7 +846,7 @@ MonoBehaviour:
     m_HSlider: 0
     m_VSlider: 0
     m_IgnoreScrollWheelUntilClicked: 0
-    m_EnableMouseInput: 0
+    m_EnableMouseInput: 1
     m_EnableSliderZoomHorizontal: 0
     m_EnableSliderZoomVertical: 0
     m_UniformScale: 1
@@ -1020,23 +855,23 @@ MonoBehaviour:
       serializedVersion: 2
       x: 0
       y: 21
-      width: 1588
+      width: 1655
       height: 745
     m_Scale: {x: 1, y: 1}
-    m_Translation: {x: 794, y: 372.5}
+    m_Translation: {x: 827.5, y: 372.5}
     m_MarginLeft: 0
     m_MarginRight: 0
     m_MarginTop: 0
     m_MarginBottom: 0
     m_LastShownAreaInsideMargins:
       serializedVersion: 2
-      x: -794
+      x: -827.5
       y: -372.5
-      width: 1588
+      width: 1655
       height: 745
     m_MinimalGUI: 1
   m_defaultScale: 1
-  m_LastWindowPixelSize: {x: 1588, y: 766}
+  m_LastWindowPixelSize: {x: 1655, y: 766}
   m_ClearInEditMode: 1
   m_NoCameraWarning: 1
   m_LowResolutionForAspectRatios: 01000000000000000000

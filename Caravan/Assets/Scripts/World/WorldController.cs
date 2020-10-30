@@ -121,6 +121,8 @@ namespace Assets.Scripts.World
                     var targetPosition = MovePlayer.GetPlayerTargetPosition(PlayerController.transform.position, Time.deltaTime);
 
                     PlayerController.transform.position = targetPosition;
+                    PlayerController.Player.X = targetPosition.x;
+                    PlayerController.Player.Y = targetPosition.y; 
                 }
             }
         }
