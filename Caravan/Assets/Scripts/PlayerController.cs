@@ -1,6 +1,4 @@
-﻿using System;
-using Assets.Scripts.World;
-using CrvService.Shared.Contracts.Entities;
+﻿using CrvService.Shared.Contracts.Entities;
 using UnityEngine;
 
 namespace Assets.Scripts
@@ -9,12 +7,13 @@ namespace Assets.Scripts
     {
         public IPlayer Player { get; private set; }
 
-        public void UpdateFromServer(IPlayer player)
+        public void UpdateFromServer(IPlayer player, bool newWorld)
         {
             var oldPlayer = Player;
             Player = player;
 
-            if (oldPlayer == null || Math.Abs(Player.X - oldPlayer.X) > SharedValues.Tolerance || Math.Abs(Player.Y - oldPlayer.Y) > SharedValues.Tolerance) ChangeCoordinates();
+            //if (oldPlayer == null || Math.Abs(Player.X - oldPlayer.X) > SharedValues.Tolerance || Math.Abs(Player.Y - oldPlayer.Y) > SharedValues.Tolerance) ChangeCoordinates();
+            if (newWorld) ChangeCoordinates();
         }
 
         private void ChangeCoordinates()

@@ -63,8 +63,10 @@ namespace Assets.Scripts.World
             if (CaravanServer != null)
                 try
                 {
-                    if (!WaitingServerResponse && lastPingDateTimeUtc.AddSeconds(1) < DateTime.UtcNow)
+                    if (!WaitingServerResponse && (lastPingDateTimeUtc.AddSeconds(1) < DateTime.UtcNow || CommandsToSend.Any()))
                     {
+                        WaitingServerResponse = true;
+
                         var request = new ProcessWorldRequestClientSideEntity
                         {
                             WorldGuid = World?.Guid,
@@ -73,6 +75,7 @@ namespace Assets.Scripts.World
                         };
 
                         StartCoroutine(CaravanServer.ProcessWorld(request, ProcessServerResponse));
+                        lastPingDateTimeUtc = DateTime.UtcNow;
                     }
 
                     ProcessMovePlayer();
@@ -122,7 +125,7 @@ namespace Assets.Scripts.World
 
                     PlayerController.transform.position = targetPosition;
                     PlayerController.Player.X = targetPosition.x;
-                    PlayerController.Player.Y = targetPosition.y; 
+                    PlayerController.Player.Y = targetPosition.y;
                 }
             }
         }
@@ -134,7 +137,6 @@ namespace Assets.Scripts.World
                 Player = Player
             };
 
-            WaitingServerResponse = true;
 
             yield return CaravanServer.GetNewWorld(request, ProcessServerResponse);
         }
@@ -169,7 +171,10 @@ namespace Assets.Scripts.World
                 DestroyNotMappedWorldObjects();
 
                 World = response.World;
-                Player = response.Player;
+                Player.IsMoving = response.Player.IsMoving;
+                Player.MoveToX = response.Player.MoveToX;
+                Player.MoveToY = response.Player.MoveToY;
+                Player.VisibleCities = response.Player.VisibleCities;
 
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                 if (Player.IsMoving)
@@ -191,7 +196,7 @@ namespace Assets.Scripts.World
                 foreach (var obj in AllObjects) obj.Value.Updated = false;
 
                 foreach (var city in response.World.Cities.Collection) MapCity(city, response.Player);
-                MapPayer(response.Player);
+                MapPayer(response.Player, true);
 
                 DestroyNotMappedWorldObjects();
 
@@ -206,7 +211,7 @@ namespace Assets.Scripts.World
             }
         }
 
-        private void MapPayer(IPlayer player)
+        private void MapPayer(IPlayer player, bool newWorld = false)
         {
             if (!AllObjects.TryGetValue(player.Guid, out var item))
             {
@@ -222,7 +227,8 @@ namespace Assets.Scripts.World
             }
 
             // ReSharper disable once PossibleNullReferenceException
-            (item.Controller as PlayerController).UpdateFromServer(player);
+            (item.Controller as PlayerController).UpdateFromServer(player, newWorld);
+
             item.Updated = true;
         }
 
