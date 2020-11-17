@@ -29,7 +29,6 @@ ScriptsOnlyBuild:
     UnityEditor.TestRunner.dll:
     - TestRunner.Callbacks.WindowResultUpdaterDataHolder
     - UnityEditor.TestTools.TestRunner.Api.CallbacksHolder
-    - UnityEditor.TestTools.TestRunner.CommandLineTest.RunData
     - UnityEditor.TestTools.TestRunner.TestListCacheData
     - UnityEditor.TestTools.TestRunner.TestRun.TestJobDataHolder
     - UnityEditor.TestTools.TestRunner.TestRunnerWindow
@@ -74,7 +73,7 @@ ScriptsOnlyBuild:
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11202}
+      Script: {instanceID: 11204}
     - Class: 114
       Script: {instanceID: 11494}
     - Class: 114
@@ -88,41 +87,41 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 12268}
     - Class: 114
-      Script: {instanceID: 12544}
+      Script: {instanceID: 12546}
     - Class: 114
-      Script: {instanceID: 12570}
+      Script: {instanceID: 12572}
     - Class: 114
-      Script: {instanceID: 12662}
+      Script: {instanceID: 12664}
     - Class: 114
-      Script: {instanceID: 12926}
+      Script: {instanceID: 12928}
     - Class: 114
-      Script: {instanceID: 13060}
+      Script: {instanceID: 13062}
     - Class: 114
-      Script: {instanceID: 13274}
+      Script: {instanceID: 13278}
     - Class: 114
-      Script: {instanceID: 13292}
+      Script: {instanceID: 13296}
     - Class: 114
-      Script: {instanceID: 13332}
+      Script: {instanceID: 13336}
     - Class: 114
-      Script: {instanceID: 13360}
+      Script: {instanceID: 13364}
     - Class: 114
-      Script: {instanceID: 13594}
+      Script: {instanceID: 13598}
     - Class: 114
-      Script: {instanceID: 13698}
+      Script: {instanceID: 13702}
     - Class: 114
-      Script: {instanceID: 13708}
+      Script: {instanceID: 13712}
     - Class: 114
-      Script: {instanceID: 13762}
+      Script: {instanceID: 13766}
     - Class: 114
-      Script: {instanceID: 13978}
+      Script: {instanceID: 13984}
     - Class: 114
-      Script: {instanceID: 14140}
+      Script: {instanceID: 14146}
     - Class: 114
-      Script: {instanceID: 14318}
+      Script: {instanceID: 14324}
     - Class: 114
-      Script: {instanceID: 14338}
+      Script: {instanceID: 14344}
     - Class: 114
-      Script: {instanceID: 14370}
+      Script: {instanceID: 14376}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -506,7 +505,7 @@ ScriptsOnlyBuild:
     className: Physics2DRaycaster
   - hash:
       serializedVersion: 2
-      Hash: 8a8c837634768f3119e5ba286cd2e006
+      Hash: a5eae39d5fd3262d2bd3ed1490a0cefa
     assemblyName: Assembly-CSharp.dll
     namespaceName: Assets.Menu
     className: SettingsDialogController

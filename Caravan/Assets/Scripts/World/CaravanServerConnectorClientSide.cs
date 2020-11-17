@@ -14,8 +14,9 @@ namespace Assets.Scripts.World
             var worldRepository = new WorldRepositoryClientSide();
             var playerRepository = new PlayerRepositoryClientSide();
             var newInstanceFactory = new NewInstanceFactoryClientSide(worldRepository, playerRepository);
+
             var processorsProvider = new ProcessorsProvider(newInstanceFactory);
-            var newWorldGenerator = new NewWorldGenerator(newInstanceFactory, playerRepository);
+            var newWorldGenerator = new NewWorldGenerator(newInstanceFactory, playerRepository, worldRepository);
             CaravanServer = new CaravanServerClientSide(processorsProvider, newInstanceFactory, newWorldGenerator, playerRepository, worldRepository);
         }
 

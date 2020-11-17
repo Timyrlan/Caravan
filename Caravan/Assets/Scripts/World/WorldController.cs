@@ -60,7 +60,7 @@ namespace Assets.Scripts.World
         private void Update()
         {
             //if (GameStatus.Paused) return;
-            if (CaravanServer != null)
+            if (CaravanServer != null && World!= null)
                 try
                 {
                     if (!WaitingServerResponse && (lastPingDateTimeUtc.AddSeconds(1) < DateTime.UtcNow || CommandsToSend.Any()))
@@ -82,6 +82,7 @@ namespace Assets.Scripts.World
                 }
                 catch (Exception e)
                 {
+                    CaravanServer = null;
                     Debug.LogError($"Error while WorldController.Update(): {e}");
                 }
         }

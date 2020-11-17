@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.World;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Assets.Menu
@@ -8,6 +9,7 @@ namespace Assets.Menu
         [SerializeField] private Toggle HowLogToggle;
 
         [SerializeField] private GameObject Log;
+        [SerializeField] private WorldController WorldController;
 
         private GameSettings Settings { get; set; }
 
@@ -117,5 +119,6 @@ namespace Assets.Menu
     public class GameSettings
     {
         public bool ShowLog { get; set; }
+        public string PlayerGuid { get; set; }
     }
 }
