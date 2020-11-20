@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets.Menu;
 using CrvService.Shared.Contracts.Entities;
-using CrvService.Shared.Contracts.Entities.ClientCommands.Base;
+using CrvService.Shared.Contracts.Entities.Commands.ClientCommands.Base;
 using CrvService.Shared.Logic.ClientSide;
-using CrvService.Shared.Logic.ClientSide.ClientCommands;
+using CrvService.Shared.Logic.ClientSide.Commands.ClientCommands;
 using TMPro;
 using UnityEngine;
 
@@ -311,7 +311,7 @@ namespace Assets.Scripts.World
             CommandsToSend.Add(new MovePlayerClientCommandClientSideEntity
             {
                 ToX = moveTo.x,
-                ToY = moveTo.y
+                ToY = moveTo.y 
             });
         }
 
