@@ -7,13 +7,10 @@ namespace Assets.Scripts
     {
         public IPlayer Player { get; private set; }
 
-        public void UpdateFromServer(IPlayer player, bool newWorld)
+        public void UpdateFromServer(IPlayer player)
         {
-            var oldPlayer = Player;
             Player = player;
-
-            //if (oldPlayer == null || Math.Abs(Player.X - oldPlayer.X) > SharedValues.Tolerance || Math.Abs(Player.Y - oldPlayer.Y) > SharedValues.Tolerance) ChangeCoordinates();
-            if (newWorld) ChangeCoordinates();
+            ChangeCoordinates();
         }
 
         private void ChangeCoordinates()

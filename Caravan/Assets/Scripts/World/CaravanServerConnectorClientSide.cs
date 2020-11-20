@@ -12,12 +12,12 @@ namespace Assets.Scripts.World
         public CaravanServerConnectorClientSide()
         {
             var worldRepository = new WorldRepositoryClientSide();
-            var playerRepository = new PlayerRepositoryClientSide();
-            var newInstanceFactory = new NewInstanceFactoryClientSide(worldRepository, playerRepository);
+            
+            var newInstanceFactory = new NewInstanceFactoryClientSide(worldRepository);
 
             var processorsProvider = new ProcessorsProvider(newInstanceFactory);
-            var newWorldGenerator = new NewWorldGenerator(newInstanceFactory, playerRepository, worldRepository);
-            CaravanServer = new CaravanServerClientSide(processorsProvider, newInstanceFactory, newWorldGenerator, playerRepository, worldRepository);
+            var newWorldGenerator = new NewWorldGenerator(newInstanceFactory, worldRepository);
+            CaravanServer = new CaravanServerClientSide(processorsProvider, newInstanceFactory, newWorldGenerator, worldRepository);
         }
 
         private ICaravanServer CaravanServer { get; }

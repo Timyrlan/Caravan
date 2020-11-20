@@ -60,7 +60,7 @@ namespace Assets.Scripts.World
         private void Update()
         {
             //if (GameStatus.Paused) return;
-            if (CaravanServer != null && World!= null)
+            if (CaravanServer != null && World != null)
                 try
                 {
                     if (!WaitingServerResponse && (lastPingDateTimeUtc.AddSeconds(1) < DateTime.UtcNow || CommandsToSend.Any()))
@@ -135,7 +135,7 @@ namespace Assets.Scripts.World
         {
             var request = new GetNewWorldRequestClientSideEntity
             {
-                Player = Player
+                UserGuid = SettingsDialogController.Settings.UserGuid
             };
 
 
@@ -227,8 +227,20 @@ namespace Assets.Scripts.World
                 PlayerController = item.Controller as PlayerController;
             }
 
-            // ReSharper disable once PossibleNullReferenceException
-            (item.Controller as PlayerController).UpdateFromServer(player, newWorld);
+            if (newWorld)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                (item.Controller as PlayerController).UpdateFromServer(player);
+            }
+            else
+            {
+                Player.IsMoving = player.IsMoving;
+                Player.MoveToX = player.MoveToX;
+                Player.MoveToY = player.MoveToY;
+                Player.WorldGuid = player.WorldGuid;
+                Player.VisibleCities = player.VisibleCities;
+            }
+
 
             item.Updated = true;
         }

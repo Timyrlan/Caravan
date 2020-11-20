@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.World;
+﻿using System;
+using Assets.Scripts.World;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,7 +12,7 @@ namespace Assets.Menu
         [SerializeField] private GameObject Log;
         [SerializeField] private WorldController WorldController;
 
-        private GameSettings Settings { get; set; }
+        public GameSettings Settings { get; private set; }
 
         public override void ShowDialog()
         {
@@ -101,7 +102,9 @@ namespace Assets.Menu
         {
             var result = new GameSettings
             {
-                ShowLog = bool.Parse(PlayerPrefs.GetString(nameof(GameSettings.ShowLog), "False"))
+                ShowLog = bool.Parse(PlayerPrefs.GetString(nameof(GameSettings.ShowLog), "False")),
+                PlayerGuid = PlayerPrefs.GetString(nameof(GameSettings.PlayerGuid), null),
+                UserGuid = PlayerPrefs.GetString(nameof(GameSettings.UserGuid), Guid.NewGuid().ToString())
             };
 
             return result;
@@ -120,5 +123,7 @@ namespace Assets.Menu
     {
         public bool ShowLog { get; set; }
         public string PlayerGuid { get; set; }
+
+        public string UserGuid { get; set; }
     }
 }
