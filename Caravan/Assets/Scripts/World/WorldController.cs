@@ -147,7 +147,7 @@ namespace Assets.Scripts.World
             var commandsGuids = commands.Select(c => c.Guid).ToArray();
             var resultCommands = new List<IClientCommand>();
             foreach (var clientCommand in CommandsToSend)
-                if (!commandsGuids.Contains(clientCommand.Guid))
+                if (!commandsGuids.Contains(clientCommand.Guid)) 
                     resultCommands.Add(clientCommand);
 
             CommandsToSend = resultCommands;
@@ -156,59 +156,73 @@ namespace Assets.Scripts.World
 
         public void ProcessServerResponse(IProcessWorldRequest request, IProcessWorldResponse response)
         {
-            WaitingServerResponse = false;
-            lastPingDateTimeUtc = DateTime.UtcNow;
-
-            if (response != null)
+            try
             {
-                RemoveSendedCommands(request.ClientCommands);
+                WaitingServerResponse = false;
+                lastPingDateTimeUtc = DateTime.UtcNow;
 
-                foreach (var obj in AllObjects) obj.Value.Updated = false;
+                if (response != null)
+                {
+                    RemoveSendedCommands(request.ClientCommands);
+
+                    foreach (var obj in AllObjects) obj.Value.Updated = false;
 
 
-                foreach (var city in response.World.Cities.Collection) MapCity(city, response.Player);
-                MapPayer(response.Player);
+                    foreach (var city in response.World.Cities.Collection) MapCity(city, response.Player);
+                    MapPayer(response.Player); 
 
-                DestroyNotMappedWorldObjects();
+                    DestroyNotMappedWorldObjects();
 
-                World = response.World;
-                Player.IsMoving = response.Player.IsMoving;
-                Player.MoveToX = response.Player.MoveToX;
-                Player.MoveToY = response.Player.MoveToY;
-                Player.VisibleCities = response.Player.VisibleCities;
+                    World = response.World;
+                    Player.IsMoving = response.Player.IsMoving;
+                    Player.MoveToX = response.Player.MoveToX;
+                    Player.MoveToY = response.Player.MoveToY;
+                    Player.VisibleCities = response.Player.VisibleCities;
 
-                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                if (Player.IsMoving)
-                    MovePlayer = new MovePlayer(new Vector3(Player.X, Player.Y), new Vector3(Player.MoveToX, Player.MoveToY));
-                else
-                    MovePlayer = null;
+                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                    if (Player.IsMoving)
+                        MovePlayer = new MovePlayer(new Vector3(Player.X, Player.Y), new Vector3(Player.MoveToX, Player.MoveToY));
+                    else
+                        MovePlayer = null;
+                }
+            }
+            catch (Exception e)
+            {
+                WriteLog($"Error while ProcessServerResponse='{e}'");
             }
         }
 
         public void ProcessServerResponse(IGetNewWorldRequest request, IProcessWorldResponse response)
         {
-            WaitingServerResponse = false;
-            lastPingDateTimeUtc = DateTime.UtcNow;
-
-            if (response != null)
+            try
             {
-                CommandsToSend = new List<IClientCommand>();
+                WaitingServerResponse = false;
+                lastPingDateTimeUtc = DateTime.UtcNow;
 
-                foreach (var obj in AllObjects) obj.Value.Updated = false;
+                if (response != null)
+                {
+                    CommandsToSend = new List<IClientCommand>();
+                 
+                    foreach (var obj in AllObjects) obj.Value.Updated = false;
 
-                foreach (var city in response.World.Cities.Collection) MapCity(city, response.Player);
-                MapPayer(response.Player, true);
+                    foreach (var city in response.World.Cities.Collection) MapCity(city, response.Player);
+                    MapPayer(response.Player, true);
 
-                DestroyNotMappedWorldObjects();
+                    DestroyNotMappedWorldObjects();
 
-                World = response.World;
-                Player = response.Player;
+                    World = response.World;
+                    Player = response.Player;
 
-                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                if (Player.IsMoving)
-                    MovePlayer = new MovePlayer(new Vector3(Player.X, Player.Y), new Vector3(Player.MoveToX, Player.MoveToY));
-                else
-                    MovePlayer = null;
+                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                    if (Player.IsMoving)
+                        MovePlayer = new MovePlayer(new Vector3(Player.X, Player.Y), new Vector3(Player.MoveToX, Player.MoveToY));
+                    else
+                        MovePlayer = null;
+                }
+            }
+            catch (Exception e)
+            {
+                WriteLog($"Error while ProcessServerResponse='{e}'");
             }
         }
 
@@ -216,6 +230,7 @@ namespace Assets.Scripts.World
         {
             if (!AllObjects.TryGetValue(player.Guid, out var item))
             {
+                WriteLog($"Creating new player with guid='{player.Guid}'");
                 item = new AllObjectsDictionaryItem
                 {
                     ItemFromServer = player
@@ -229,6 +244,7 @@ namespace Assets.Scripts.World
 
             if (newWorld)
             {
+                WriteLog($"UpdateFromServer player='{player.Guid}'");
                 // ReSharper disable once PossibleNullReferenceException
                 (item.Controller as PlayerController).UpdateFromServer(player);
             }
@@ -267,10 +283,12 @@ namespace Assets.Scripts.World
                     {
                         if (item.Value.Controller != null)
                         {
+                            WriteLog($"Destroy='{item.Key}'");
                             Destroy(item.Value.Controller);
                             item.Value.Controller = null;
                         }
 
+                        WriteLog($"Remove='{item.Key}'");
                         AllObjects.Remove(item.Key);
                     }
                     catch (Exception e)
