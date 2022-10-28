@@ -3,10 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Menu;
-using CrvService.Shared.Contracts.Entities;
-using CrvService.Shared.Contracts.Entities.Commands.ClientCommands.Base;
-using CrvService.Shared.Logic.ClientSide;
-using CrvService.Shared.Logic.ClientSide.Commands.ClientCommands;
+using CrvService.Contracts;
+using CrvService.Contracts.Commands.ClientCommands;
+using CrvService.Contracts.Commands.ClientCommands.Base;
 using TMPro;
 using UnityEngine;
 
@@ -28,18 +27,18 @@ namespace Assets.Scripts.World
 
         private DateTime lastPingDateTimeUtc = DateTime.MinValue;
 
-        private Dictionary<string, AllObjectsDictionaryItem> AllObjects { get; } = new Dictionary<string, AllObjectsDictionaryItem>();
+        private Dictionary<Guid, AllObjectsDictionaryItem> AllObjects { get; } = new();
 
         private List<string> Log { get; set; }
 
         private MovePlayer MovePlayer { get; set; }
 
-        private ICaravanServerConnector CaravanServer { get; set; }
+        private CaravanServerHttpConnector CaravanServerHttpConnector { get; set; }
 
-        private IWorld World { get; set; }
-        private IPlayer Player { get; set; }
+        private WorldDto World { get; set; }
+        private PlayerDto Player { get; set; }
 
-        private List<IClientCommand> CommandsToSend { get; set; } = new List<IClientCommand>();
+        private List<ClientCommandDto> CommandsToSend { get; set; } = new();
 
         private bool WaitingServerResponse { get; set; }
 
@@ -60,21 +59,21 @@ namespace Assets.Scripts.World
         private void Update()
         {
             //if (GameStatus.Paused) return;
-            if (CaravanServer != null && World != null)
+            if (CaravanServerHttpConnector != null && World != null)
                 try
                 {
                     if (!WaitingServerResponse && (lastPingDateTimeUtc.AddSeconds(1) < DateTime.UtcNow || CommandsToSend.Any()))
                     {
                         WaitingServerResponse = true;
 
-                        var request = new ProcessWorldRequestClientSideEntity
+                        var request = new PingRequest
                         {
-                            WorldGuid = World?.Guid,
+                            WorldGuid = World.Guid,
                             Player = Player,
-                            ClientCommands = CommandsToSend.ToArray()
+                            ClientCommands = CommandsToSend.Select(c => new ClientCommandDtoWrapper(c)).ToArray()
                         };
 
-                        StartCoroutine(CaravanServer.ProcessWorld(request, ProcessServerResponse));
+                        StartCoroutine(CaravanServerHttpConnector.ProcessWorld(request, ProcessServerResponse));
                         lastPingDateTimeUtc = DateTime.UtcNow;
                     }
 
@@ -82,16 +81,16 @@ namespace Assets.Scripts.World
                 }
                 catch (Exception e)
                 {
-                    CaravanServer = null;
+                    CaravanServerHttpConnector = null;
                     Debug.LogError($"Error while WorldController.Update(): {e}");
                 }
         }
 
         public void OnStartLocalGameButton()
         {
-            if (CaravanServer == null)
+            if (CaravanServerHttpConnector == null)
             {
-                CaravanServer = new CaravanServerConnectorClientSide();
+                CaravanServerHttpConnector = new CaravanServerHttpConnector();
 
                 Log = new List<string>();
 
@@ -103,9 +102,9 @@ namespace Assets.Scripts.World
 
         public void OnStartOnlineGameButton()
         {
-            if (CaravanServer == null)
+            if (CaravanServerHttpConnector == null)
             {
-                CaravanServer = new CaravanServerHttpConnector();
+                CaravanServerHttpConnector = new CaravanServerHttpConnector();
 
                 Log = new List<string>();
 
@@ -133,28 +132,28 @@ namespace Assets.Scripts.World
 
         private IEnumerator GetWorld()
         {
-            var request = new GetNewWorldRequestClientSideEntity
+            var request = new GetNewWorldRequest
             {
-                UserGuid = SettingsDialogController.Settings.UserGuid
+                UserGuid = Guid.Parse(SettingsDialogController.Settings.UserGuid)
             };
 
 
-            yield return CaravanServer.GetNewWorld(request, ProcessServerResponse);
+            yield return CaravanServerHttpConnector.GetNewWorld(request, ProcessServerResponse);
         }
 
-        private void RemoveSendedCommands(IClientCommand[] commands)
+        private void RemoveSendedCommands(ClientCommandDtoWrapper[] commands)
         {
             var commandsGuids = commands.Select(c => c.Guid).ToArray();
-            var resultCommands = new List<IClientCommand>();
+            var resultCommands = new List<ClientCommandDto>();
             foreach (var clientCommand in CommandsToSend)
-                if (!commandsGuids.Contains(clientCommand.Guid)) 
+                if (!commandsGuids.Contains(clientCommand.Guid))
                     resultCommands.Add(clientCommand);
 
             CommandsToSend = resultCommands;
         }
 
 
-        public void ProcessServerResponse(IProcessWorldRequest request, IProcessWorldResponse response)
+        public void ProcessServerResponse(PingRequest request, PingResponse response)
         {
             try
             {
@@ -168,8 +167,8 @@ namespace Assets.Scripts.World
                     foreach (var obj in AllObjects) obj.Value.Updated = false;
 
 
-                    foreach (var city in response.World.Cities.Collection) MapCity(city, response.Player);
-                    MapPayer(response.Player); 
+                    foreach (var city in response.World.Cities) MapCity(city, response.Player);
+                    MapPayer(response.Player);
 
                     DestroyNotMappedWorldObjects();
 
@@ -177,7 +176,7 @@ namespace Assets.Scripts.World
                     Player.IsMoving = response.Player.IsMoving;
                     Player.MoveToX = response.Player.MoveToX;
                     Player.MoveToY = response.Player.MoveToY;
-                    Player.VisibleCities = response.Player.VisibleCities;
+                    Player.Citys = response.Player.Citys;
 
                     // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                     if (Player.IsMoving)
@@ -192,7 +191,7 @@ namespace Assets.Scripts.World
             }
         }
 
-        public void ProcessServerResponse(IGetNewWorldRequest request, IProcessWorldResponse response)
+        public void ProcessServerResponse(GetNewWorldRequest request, PingResponse response)
         {
             try
             {
@@ -201,11 +200,11 @@ namespace Assets.Scripts.World
 
                 if (response != null)
                 {
-                    CommandsToSend = new List<IClientCommand>();
-                 
+                    CommandsToSend = new List<ClientCommandDto>();
+
                     foreach (var obj in AllObjects) obj.Value.Updated = false;
 
-                    foreach (var city in response.World.Cities.Collection) MapCity(city, response.Player);
+                    foreach (var city in response.World.Cities) MapCity(city, response.Player);
                     MapPayer(response.Player, true);
 
                     DestroyNotMappedWorldObjects();
@@ -226,7 +225,7 @@ namespace Assets.Scripts.World
             }
         }
 
-        private void MapPayer(IPlayer player, bool newWorld = false)
+        private void MapPayer(PlayerDto player, bool newWorld = false)
         {
             if (!AllObjects.TryGetValue(player.Guid, out var item))
             {
@@ -253,19 +252,19 @@ namespace Assets.Scripts.World
                 Player.IsMoving = player.IsMoving;
                 Player.MoveToX = player.MoveToX;
                 Player.MoveToY = player.MoveToY;
-                Player.WorldGuid = player.WorldGuid;
-                Player.VisibleCities = player.VisibleCities;
+                Player.Citys = player.Citys;
+                Player.Bramins = player.Bramins;
             }
 
 
             item.Updated = true;
         }
 
-        private void MapCity(ICity city, IPlayer player)
+        private void MapCity(CityDto city, PlayerDto player)
         {
             if (!AllObjects.TryGetValue(city.Guid, out var item))
             {
-                item = new AllObjectsDictionaryItem {ItemFromServer = city};
+                item = new AllObjectsDictionaryItem { ItemFromServer = city };
                 AllObjects.Add(city.Guid, item);
                 item.Controller = Instantiate(CityControllerBase, new Vector3(city.X, city.Y, 0), Quaternion.identity);
             }
@@ -283,12 +282,10 @@ namespace Assets.Scripts.World
                     {
                         if (item.Value.Controller != null)
                         {
-                            WriteLog($"Destroy='{item.Key}'");
                             Destroy(item.Value.Controller);
                             item.Value.Controller = null;
                         }
 
-                        WriteLog($"Remove='{item.Key}'");
                         AllObjects.Remove(item.Key);
                     }
                     catch (Exception e)
@@ -326,10 +323,10 @@ namespace Assets.Scripts.World
         public void WorldClick()
         {
             var moveTo = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            CommandsToSend.Add(new MovePlayerClientCommandClientSideEntity
+            CommandsToSend.Add(new MovePlayerClientCommandDto
             {
                 ToX = moveTo.x,
-                ToY = moveTo.y 
+                ToY = moveTo.y
             });
         }
 
@@ -437,7 +434,7 @@ namespace Assets.Scripts.World
 
         private static List<string> ConcatLog(string message, List<string> log)
         {
-            return new List<string> {message}.Concat(log).ToList();
+            return new List<string> { message }.Concat(log).ToList();
         }
 
         private void WriteSystemLog(string message)

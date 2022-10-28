@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Assets.Scripts.World;
-using CrvService.Shared.Contracts.Entities;
+using CrvService.Contracts;
 using UnityEngine;
 
 // ReSharper disable InconsistentNaming
@@ -13,11 +13,11 @@ namespace Assets.Scripts
         [SerializeField] private Canvas Canvas;
 
 
-        public ICity City { get; private set; }
+        public CityDto City { get; private set; }
 
         public bool Visible { get; set; }
 
-        public void UpdateFromServer(ICity city, IPlayer player)
+        public void UpdateFromServer(CityDto city, PlayerDto player)
         {
             var caption = transform.Find("Caption");
             var oldCity = City;
@@ -25,7 +25,7 @@ namespace Assets.Scripts
 
             if (oldCity == null || City.Name != oldCity.Name) caption.gameObject.GetComponent<TextMesh>().text = City.Name;
 
-            var visible = player.VisibleCities.Contains(city.Guid);
+            var visible = player.Citys.Any(c => c.Guid == city.Guid);
 
             if (oldCity == null || Visible != visible)
             {

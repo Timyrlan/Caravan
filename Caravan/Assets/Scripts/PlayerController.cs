@@ -1,13 +1,13 @@
-﻿using CrvService.Shared.Contracts.Entities;
+﻿using CrvService.Contracts;
 using UnityEngine;
 
 namespace Assets.Scripts
 {
     public class PlayerController : MonoBehaviour
     {
-        public IPlayer Player { get; private set; }
+        public PlayerDto Player { get; private set; }
 
-        public void UpdateFromServer(IPlayer player)
+        public void UpdateFromServer(PlayerDto player)
         {
             Player = player;
             ChangeCoordinates();
