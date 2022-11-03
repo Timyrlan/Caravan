@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets.Menu;
 using CrvService.Contracts;
-using CrvService.Contracts.Commands.ClientCommands;
-using CrvService.Contracts.Commands.ClientCommands.Base;
+using CrvService.Contracts.Entities;
+using CrvService.Contracts.Entities.Commands.ClientCommands;
+using CrvService.Contracts.Entities.Commands.ClientCommands.Base;
 using TMPro;
 using UnityEngine;
 
 // ReSharper disable ConvertToNullCoalescingCompoundAssignment
-
 
 namespace Assets.Scripts.World
 {
@@ -35,10 +35,10 @@ namespace Assets.Scripts.World
 
         private CaravanServerHttpConnector CaravanServerHttpConnector { get; set; }
 
-        private WorldDto World { get; set; }
-        private PlayerDto Player { get; set; }
+        private CrvService.Contracts.Entities.World World { get; set; }
+        private Player Player { get; set; }
 
-        private List<ClientCommandDto> CommandsToSend { get; set; } = new();
+        private List<ClientCommand> CommandsToSend { get; set; } = new();
 
         private bool WaitingServerResponse { get; set; }
 
@@ -69,8 +69,8 @@ namespace Assets.Scripts.World
                         var request = new PingRequest
                         {
                             WorldGuid = World.Guid,
-                            Player = Player,
-                            ClientCommands = CommandsToSend.Select(c => new ClientCommandDtoWrapper(c)).ToArray()
+                            Player = ToServerMapper.Map(Player),
+                            ClientCommands = CommandsToSend.ToArray()
                         };
 
                         StartCoroutine(CaravanServerHttpConnector.ProcessWorld(request, ProcessServerResponse));
@@ -141,10 +141,10 @@ namespace Assets.Scripts.World
             yield return CaravanServerHttpConnector.GetNewWorld(request, ProcessServerResponse);
         }
 
-        private void RemoveSendedCommands(ClientCommandDtoWrapper[] commands)
+        private void RemoveSendedCommands(ClientCommand[] commands)
         {
             var commandsGuids = commands.Select(c => c.Guid).ToArray();
-            var resultCommands = new List<ClientCommandDto>();
+            var resultCommands = new List<ClientCommand>();
             foreach (var clientCommand in CommandsToSend)
                 if (!commandsGuids.Contains(clientCommand.Guid))
                     resultCommands.Add(clientCommand);
@@ -167,7 +167,7 @@ namespace Assets.Scripts.World
                     foreach (var obj in AllObjects) obj.Value.Updated = false;
 
 
-                    foreach (var city in response.World.Cities) MapCity(city, response.Player);
+                    foreach (var city in response.World.Citys) MapCity(city, response.Player);
                     MapPayer(response.Player);
 
                     DestroyNotMappedWorldObjects();
@@ -176,7 +176,7 @@ namespace Assets.Scripts.World
                     Player.IsMoving = response.Player.IsMoving;
                     Player.MoveToX = response.Player.MoveToX;
                     Player.MoveToY = response.Player.MoveToY;
-                    Player.Citys = response.Player.Citys;
+                    Player.VisibleCitys = response.Player.VisibleCitys.ToArray();
 
                     // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                     if (Player.IsMoving)
@@ -200,11 +200,11 @@ namespace Assets.Scripts.World
 
                 if (response != null)
                 {
-                    CommandsToSend = new List<ClientCommandDto>();
+                    CommandsToSend = new List<ClientCommand>();
 
                     foreach (var obj in AllObjects) obj.Value.Updated = false;
 
-                    foreach (var city in response.World.Cities) MapCity(city, response.Player);
+                    foreach (var city in response.World.Citys) MapCity(city, response.Player);
                     MapPayer(response.Player, true);
 
                     DestroyNotMappedWorldObjects();
@@ -225,7 +225,7 @@ namespace Assets.Scripts.World
             }
         }
 
-        private void MapPayer(PlayerDto player, bool newWorld = false)
+        private void MapPayer(Player player, bool newWorld = false)
         {
             if (!AllObjects.TryGetValue(player.Guid, out var item))
             {
@@ -252,7 +252,7 @@ namespace Assets.Scripts.World
                 Player.IsMoving = player.IsMoving;
                 Player.MoveToX = player.MoveToX;
                 Player.MoveToY = player.MoveToY;
-                Player.Citys = player.Citys;
+                Player.VisibleCitys = player.VisibleCitys.ToArray();
                 Player.Bramins = player.Bramins;
             }
 
@@ -260,7 +260,7 @@ namespace Assets.Scripts.World
             item.Updated = true;
         }
 
-        private void MapCity(CityDto city, PlayerDto player)
+        private void MapCity(City city, Player player)
         {
             if (!AllObjects.TryGetValue(city.Guid, out var item))
             {
@@ -323,7 +323,7 @@ namespace Assets.Scripts.World
         public void WorldClick()
         {
             var moveTo = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            CommandsToSend.Add(new MovePlayerClientCommandDto
+            CommandsToSend.Add(new MovePlayerClientCommand
             {
                 ToX = moveTo.x,
                 ToY = moveTo.y

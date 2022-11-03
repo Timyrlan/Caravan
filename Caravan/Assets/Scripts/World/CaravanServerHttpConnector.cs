@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using System.Text;
 using CrvService.Contracts;
 using CrvService.Contracts.Base;
+using CrvService.Contracts.Entities;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -13,9 +15,17 @@ namespace Assets.Scripts.World
 {
     public class CaravanServerHttpConnector
     {
+        private static readonly JsonSerializerSettings Settings = new() { DefaultValueHandling = DefaultValueHandling.Ignore };
+
         public IEnumerator ProcessWorld(PingRequest request, Action<PingRequest, PingResponse> callback)
         {
-            var requestString = JsonConvert.SerializeObject(request);
+            var requestString = JsonConvert.SerializeObject(request, SuperClass.JsonSettings);
+
+            if (request.ClientCommands.Any())
+            {
+                var a = "";
+                Debug.Log("Ping withCommand: " + requestString);
+            }
 
             using var unityWebRequest = new UnityWebRequest("http://localhost:8066/ping", "POST");
             var bodyRaw = Encoding.UTF8.GetBytes(requestString);
