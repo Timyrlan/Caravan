@@ -62,3 +62,5 @@ Caravan/Build/
 Caravan/Temp/
 *.7z
 Caravan/Library/
+Caravan/Logs/
+Caravan/obj/

@@ -22,8 +22,8 @@ namespace Assets.Menu
 
         public virtual void ShowDialog()
         {
-            StartNewGameButton.gameObject.SetActive(_settingsDialogController.Settings.UserGuid != null);
-            ContinueGameButton.gameObject.SetActive(_settingsDialogController.Settings.PlayerGuid != null);
+            StartNewGameButton.gameObject.SetActive(!string.IsNullOrEmpty(_settingsDialogController.Settings.UserGuid));
+            ContinueGameButton.gameObject.SetActive(!string.IsNullOrEmpty(_settingsDialogController.Settings.PlayerGuid));
             base.ShowDialog();
         }
     }

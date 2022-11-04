@@ -1,5 +1,6 @@
 ﻿using System;
 using Assets.Scripts.World;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,7 +10,10 @@ namespace Assets.Menu
     {
         [SerializeField] private Toggle HowLogToggle;
 
+
         [SerializeField] private GameObject Log;
+        [SerializeField] private TextMeshProUGUI PlayerGuid;
+        [SerializeField] private TextMeshProUGUI UserGuid;
         [SerializeField] private WorldController WorldController;
 
         public GameSettings Settings { get; private set; }
@@ -34,6 +38,8 @@ namespace Assets.Menu
         private void SetSettingsFromControlsToGameSettings(GameSettings settings)
         {
             settings.ShowLog = HowLogToggle.isOn;
+            settings.UserGuid = UserGuid.text;
+            settings.PlayerGuid = PlayerGuid.text;
         }
 
         /// <summary>
@@ -43,6 +49,8 @@ namespace Assets.Menu
         private void SetSettingsFromGameSettingsToControls(GameSettings settings)
         {
             HowLogToggle.isOn = settings.ShowLog;
+            UserGuid.text = settings.UserGuid;
+            PlayerGuid.text = settings.PlayerGuid;
         }
 
         /// <summary>
@@ -100,6 +108,11 @@ namespace Assets.Menu
         /// </summary>
         private GameSettings LoadSettingsFromStore()
         {
+            if (Guid.NewGuid().ToString() == Guid.Empty.ToString())
+            {
+                PlayerPrefs.DeleteAll();
+            }
+
             var result = new GameSettings
             {
                 ShowLog = bool.Parse(PlayerPrefs.GetString(nameof(GameSettings.ShowLog), "False")),
@@ -117,10 +130,10 @@ namespace Assets.Menu
         ///     Сохраняем настройки в стор
         /// </summary>
         public void SaveSettingsToStore()
-        { 
-            PlayerPrefs.SetString(nameof(Settings.ShowLog), Settings.ShowLog + "");
-            PlayerPrefs.SetString(nameof(Settings.UserGuid), Settings.UserGuid + "");
-            PlayerPrefs.SetString(nameof(Settings.PlayerGuid), Settings.PlayerGuid + "");
+        {
+            PlayerPrefs.SetString(nameof(Settings.ShowLog), Settings.ShowLog.ToString());
+            PlayerPrefs.SetString(nameof(Settings.UserGuid), Settings.UserGuid);
+            PlayerPrefs.SetString(nameof(Settings.PlayerGuid), Settings.PlayerGuid);
         }
     }
 
