@@ -108,11 +108,6 @@ namespace Assets.Menu
         /// </summary>
         private GameSettings LoadSettingsFromStore()
         {
-            if (Guid.NewGuid().ToString() == Guid.Empty.ToString())
-            {
-                PlayerPrefs.DeleteAll();
-            }
-
             var result = new GameSettings
             {
                 ShowLog = bool.Parse(PlayerPrefs.GetString(nameof(GameSettings.ShowLog), "False")),
