@@ -63,7 +63,7 @@ namespace Assets.Menu
         {
             SetSettingsFromControlsToGameSettings(Settings);
             ApplySettings(Settings);
-            SaveSettingsToStore(Settings);
+            SaveSettingsToStore();
             CloseDialog();
         }
 
@@ -107,15 +107,20 @@ namespace Assets.Menu
                 UserGuid = PlayerPrefs.GetString(nameof(GameSettings.UserGuid), Guid.NewGuid().ToString())
             };
 
+            PlayerPrefs.SetString(nameof(result.UserGuid), result.UserGuid + "");
+
+
             return result;
         }
 
         /// <summary>
         ///     Сохраняем настройки в стор
         /// </summary>
-        private void SaveSettingsToStore(GameSettings settings)
-        {
-            PlayerPrefs.SetString(nameof(settings.ShowLog), settings.ShowLog + "");
+        public void SaveSettingsToStore()
+        { 
+            PlayerPrefs.SetString(nameof(Settings.ShowLog), Settings.ShowLog + "");
+            PlayerPrefs.SetString(nameof(Settings.UserGuid), Settings.UserGuid + "");
+            PlayerPrefs.SetString(nameof(Settings.PlayerGuid), Settings.PlayerGuid + "");
         }
     }
 

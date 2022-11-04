@@ -15,8 +15,6 @@ namespace Assets.Scripts.World
 {
     public class CaravanServerHttpConnector
     {
-        private static readonly JsonSerializerSettings Settings = new() { DefaultValueHandling = DefaultValueHandling.Ignore };
-
         public IEnumerator ProcessWorld(PingRequest request, Action<PingRequest, PingResponse> callback)
         {
             var requestString = JsonConvert.SerializeObject(request, SuperClass.JsonSettings);
@@ -46,7 +44,7 @@ namespace Assets.Scripts.World
 
                 var response = JsonConvert.DeserializeObject<PingResponse>(responseStr);
 
-                if (response.Status == null || response.Status.Code != (int)ResponseStatusEnum.Success)
+                if (response.Status == null || response.Status.Code != ResponseStatusEnum.Success)
                 {
                     Debug.LogError($"Ping error. response code='{response.Status?.Code}', error='{response.Status?.ErrorMessage}'");
                 }
@@ -82,7 +80,7 @@ namespace Assets.Scripts.World
 
                 var response = JsonConvert.DeserializeObject<PingResponse>(responseStr);
 
-                if (response.Status == null || response.Status.Code != (int)ResponseStatusEnum.Success)
+                if (response.Status == null || response.Status.Code != ResponseStatusEnum.Success)
                 {
                     Debug.LogError($"Ping error. response code='{response.Status?.Code}', error='{response.Status?.ErrorMessage}'");
                 }

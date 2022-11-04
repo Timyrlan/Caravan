@@ -1,15 +1,19 @@
 ﻿using CrvService.Contracts.Entities;
 
-public static class ToServerMapper
+namespace Assets.Scripts.World
 {
-    public static Player Map(Player c)
+    public static class ToServerMapper
     {
-        return new Player
+        public static Player Map(Player c)
         {
-            Guid = c.Guid,
-            IsMoving = c.IsMoving,
-            X = c.X,
-            Y = c.Y
-        };
+            return new Player
+            {
+                Guid = c.Guid,
+                IsMoving = c.IsMoving,
+                X = c.X,
+                Y = c.Y,
+                World = new CrvService.Contracts.Entities.World { Guid = c.World.Guid }
+            };
+        }
     }
 }

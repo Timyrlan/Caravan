@@ -35,7 +35,6 @@ namespace Assets.Scripts.World
 
         private CaravanServerHttpConnector CaravanServerHttpConnector { get; set; }
 
-        private CrvService.Contracts.Entities.World World { get; set; }
         private Player Player { get; set; }
 
         private List<ClientCommand> CommandsToSend { get; set; } = new();
@@ -59,7 +58,7 @@ namespace Assets.Scripts.World
         private void Update()
         {
             //if (GameStatus.Paused) return;
-            if (CaravanServerHttpConnector != null && World != null)
+            if (CaravanServerHttpConnector != null && Player != null)
                 try
                 {
                     if (!WaitingServerResponse && (lastPingDateTimeUtc.AddSeconds(1) < DateTime.UtcNow || CommandsToSend.Any()))
@@ -68,7 +67,6 @@ namespace Assets.Scripts.World
 
                         var request = new PingRequest
                         {
-                            WorldGuid = World.Guid,
                             Player = ToServerMapper.Map(Player),
                             ClientCommands = CommandsToSend.ToArray()
                         };
@@ -86,32 +84,37 @@ namespace Assets.Scripts.World
                 }
         }
 
-        public void OnStartLocalGameButton()
+        /// <summary>
+        ///     Кнопка "Начать новую игру"
+        /// </summary>
+        public void OnStartNewGameButton()
         {
-            if (CaravanServerHttpConnector == null)
-            {
-                CaravanServerHttpConnector = new CaravanServerHttpConnector();
+            SettingsDialogController.Settings.PlayerGuid = Guid.NewGuid().ToString();
+            SettingsDialogController.SaveSettingsToStore();
 
-                Log = new List<string>();
+            CaravanServerHttpConnector ??= new CaravanServerHttpConnector();
 
-                StartCoroutine(GetWorld());
+            Log = new List<string>();
 
-                MenuDialog.CloseDialog();
-            }
+            StartCoroutine(GetWorld());
+
+            MenuDialog.CloseDialog();
         }
 
-        public void OnStartOnlineGameButton()
+        /// <summary>
+        ///     Кнопка "Продолжить игру"
+        /// </summary>
+        public void OnContinueGameButton()
         {
-            if (CaravanServerHttpConnector == null)
-            {
-                CaravanServerHttpConnector = new CaravanServerHttpConnector();
+            if (SettingsDialogController.Settings.PlayerGuid == null) return;
+            if (CaravanServerHttpConnector == null) CaravanServerHttpConnector = new CaravanServerHttpConnector();
 
-                Log = new List<string>();
+            Log = new List<string>();
 
-                StartCoroutine(GetWorld());
 
-                MenuDialog.CloseDialog();
-            }
+            StartCoroutine(GetWorld());
+
+            MenuDialog.CloseDialog();
         }
 
         private void ProcessMovePlayer()
@@ -134,7 +137,8 @@ namespace Assets.Scripts.World
         {
             var request = new GetNewWorldRequest
             {
-                UserGuid = Guid.Parse(SettingsDialogController.Settings.UserGuid)
+                UserGuid = Guid.Parse(SettingsDialogController.Settings.UserGuid),
+                PlayerGuid = Guid.Parse(SettingsDialogController.Settings.PlayerGuid)
             };
 
 
@@ -167,16 +171,17 @@ namespace Assets.Scripts.World
                     foreach (var obj in AllObjects) obj.Value.Updated = false;
 
 
-                    foreach (var city in response.World.Citys) MapCity(city, response.Player);
+                    foreach (var city in response.Player.VisibleCitys) MapCity(city, response.Player);
                     MapPayer(response.Player);
 
                     DestroyNotMappedWorldObjects();
 
-                    World = response.World;
                     Player.IsMoving = response.Player.IsMoving;
                     Player.MoveToX = response.Player.MoveToX;
                     Player.MoveToY = response.Player.MoveToY;
                     Player.VisibleCitys = response.Player.VisibleCitys.ToArray();
+                    Player.World = response.Player.World;
+
 
                     // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                     if (Player.IsMoving)
@@ -204,12 +209,11 @@ namespace Assets.Scripts.World
 
                     foreach (var obj in AllObjects) obj.Value.Updated = false;
 
-                    foreach (var city in response.World.Citys) MapCity(city, response.Player);
+                    foreach (var city in response.Player.VisibleCitys) MapCity(city, response.Player);
                     MapPayer(response.Player, true);
 
                     DestroyNotMappedWorldObjects();
 
-                    World = response.World;
                     Player = response.Player;
 
                     // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
