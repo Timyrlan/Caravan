@@ -20,7 +20,7 @@ namespace Assets.Menu
             _settingsDialogController.ShowDialog();
         }
 
-        public virtual void ShowDialog()
+        public override void ShowDialog()
         {
             StartNewGameButton.gameObject.SetActive(!string.IsNullOrEmpty(_settingsDialogController.Settings.UserGuid));
             ContinueGameButton.gameObject.SetActive(!string.IsNullOrEmpty(_settingsDialogController.Settings.PlayerGuid));

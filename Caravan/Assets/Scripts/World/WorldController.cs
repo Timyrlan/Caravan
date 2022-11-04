@@ -10,22 +10,17 @@ using CrvService.Contracts.Entities.Commands.ClientCommands.Base;
 using TMPro;
 using UnityEngine;
 
-// ReSharper disable ConvertToNullCoalescingCompoundAssignment
+#pragma warning disable CS0649
 
 namespace Assets.Scripts.World
 {
-#pragma warning disable 649
-
-// ReSharper disable InconsistentNaming
-
-
     public class WorldController : MonoBehaviour
     {
         public const float CoordinateAccuracy = 0.01f;
 
         private const int LogLength = 100;
 
-        private DateTime lastPingDateTimeUtc = DateTime.MinValue;
+        private DateTime LastPingDateTimeUtc = DateTime.MinValue;
 
         private Dictionary<Guid, AllObjectsDictionaryItem> AllObjects { get; } = new();
 
@@ -40,6 +35,7 @@ namespace Assets.Scripts.World
         private List<ClientCommand> CommandsToSend { get; set; } = new();
 
         private bool WaitingServerResponse { get; set; }
+
 
         private void Start()
         {
@@ -61,7 +57,7 @@ namespace Assets.Scripts.World
             if (CaravanServerHttpConnector != null && Player != null)
                 try
                 {
-                    if (!WaitingServerResponse && (lastPingDateTimeUtc.AddSeconds(1) < DateTime.UtcNow || CommandsToSend.Any()))
+                    if (!WaitingServerResponse && (LastPingDateTimeUtc.AddSeconds(1) < DateTime.UtcNow || CommandsToSend.Any()))
                     {
                         WaitingServerResponse = true;
 
@@ -72,7 +68,7 @@ namespace Assets.Scripts.World
                         };
 
                         StartCoroutine(CaravanServerHttpConnector.ProcessWorld(request, ProcessServerResponse));
-                        lastPingDateTimeUtc = DateTime.UtcNow;
+                        LastPingDateTimeUtc = DateTime.UtcNow;
                     }
 
                     ProcessMovePlayer();
@@ -162,7 +158,7 @@ namespace Assets.Scripts.World
             try
             {
                 WaitingServerResponse = false;
-                lastPingDateTimeUtc = DateTime.UtcNow;
+                LastPingDateTimeUtc = DateTime.UtcNow;
 
                 if (response != null)
                 {
@@ -181,7 +177,7 @@ namespace Assets.Scripts.World
                     Player.MoveToY = response.Player.MoveToY;
                     Player.VisibleCitys = response.Player.VisibleCitys.ToArray();
                     Player.World = response.Player.World;
-
+                    GameInfoController.UpdateData(Player);
 
                     // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                     if (Player.IsMoving)
@@ -201,7 +197,7 @@ namespace Assets.Scripts.World
             try
             {
                 WaitingServerResponse = false;
-                lastPingDateTimeUtc = DateTime.UtcNow;
+                LastPingDateTimeUtc = DateTime.UtcNow;
 
                 if (response != null)
                 {
@@ -215,6 +211,7 @@ namespace Assets.Scripts.World
                     DestroyNotMappedWorldObjects();
 
                     Player = response.Player;
+                    GameInfoController.UpdateData(Player);
 
                     // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                     if (Player.IsMoving)
@@ -467,6 +464,8 @@ namespace Assets.Scripts.World
         [SerializeField] private PlayerController PlayerController;
 
         [SerializeField] private PlayerController PlayerControllerBase;
+
+        [SerializeField] private GameInfoController GameInfoController;
 
         #endregion
 
