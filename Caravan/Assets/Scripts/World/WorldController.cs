@@ -9,6 +9,7 @@ using CrvService.Contracts.Entities.Commands.ClientCommands;
 using CrvService.Contracts.Entities.Commands.ClientCommands.Base;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 #pragma warning disable CS0649
 
@@ -17,6 +18,7 @@ namespace Assets.Scripts.World
     public class WorldController : MonoBehaviour
     {
         public const float CoordinateAccuracy = 0.01f;
+        public const int PingPeriodMillisecond = 1000;
 
         private const int LogLength = 100;
 
@@ -39,6 +41,7 @@ namespace Assets.Scripts.World
 
         private void Start()
         {
+            
             SettingsDialogController.LoadAndApplySettings();
             MenuCanvas.gameObject.SetActive(true);
             SettingsDialogController.gameObject.SetActive(false);
@@ -48,7 +51,21 @@ namespace Assets.Scripts.World
             CityControllerBase.transform.position = new Vector3(99999, 0, 0);
             PlayerControllerBase.transform.position = new Vector3(99999, 0, 0);
 
-            MenuDialog.ShowDialog();
+            if (PlayerPrefs.GetInt("SceneReloading", 0)==1)
+            {
+                PlayerPrefs.SetInt("SceneReloading", 0);
+                CaravanServerHttpConnector ??= new CaravanServerHttpConnector();
+
+                Log = new List<string>();
+
+                StartCoroutine(GetWorld());
+
+                //MenuDialog.CloseDialog(); 
+            }
+            else
+            {
+                MenuDialog.ShowDialog();
+            }
         }
 
         private void Update()
@@ -57,7 +74,7 @@ namespace Assets.Scripts.World
             if (CaravanServerHttpConnector != null && Player != null)
                 try
                 {
-                    if (!WaitingServerResponse && (LastPingDateTimeUtc.AddSeconds(1) < DateTime.UtcNow || CommandsToSend.Any()))
+                    if (!WaitingServerResponse && (LastPingDateTimeUtc.AddMilliseconds(PingPeriodMillisecond) < DateTime.UtcNow || CommandsToSend.Any()))
                     {
                         WaitingServerResponse = true;
 
@@ -85,16 +102,12 @@ namespace Assets.Scripts.World
         /// </summary>
         public void OnStartNewGameButton()
         {
+            PlayerPrefs.SetInt("SceneReloading", 1);
             SettingsDialogController.Settings.PlayerGuid = Guid.NewGuid().ToString();
             SettingsDialogController.SaveSettingsToStore();
 
-            CaravanServerHttpConnector ??= new CaravanServerHttpConnector();
-
-            Log = new List<string>();
-
-            StartCoroutine(GetWorld());
-
-            MenuDialog.CloseDialog();
+            var scene = SceneManager.GetActiveScene();
+            SceneManager.LoadScene(scene.name);
         }
 
         /// <summary>
@@ -120,7 +133,7 @@ namespace Assets.Scripts.World
                 var distance = Vector3.Distance(MovePlayer.MoveTo, PlayerController.transform.position);
                 if (distance > CoordinateAccuracy)
                 {
-                    var targetPosition = MovePlayer.GetPlayerTargetPosition(PlayerController.transform.position, Time.deltaTime);
+                    var targetPosition = MovePlayer.GetPlayerTargetPosition(PlayerController.transform.position, Time.deltaTime*0.7f);
 
                     PlayerController.transform.position = targetPosition;
                     PlayerController.Player.X = targetPosition.x;
@@ -172,11 +185,7 @@ namespace Assets.Scripts.World
 
                     DestroyNotMappedWorldObjects();
 
-                    Player.IsMoving = response.Player.IsMoving;
-                    Player.MoveToX = response.Player.MoveToX;
-                    Player.MoveToY = response.Player.MoveToY;
-                    Player.VisibleCitys = response.Player.VisibleCitys.ToArray();
-                    Player.World = response.Player.World;
+
                     GameInfoController.UpdateData(Player);
 
                     // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
@@ -210,14 +219,9 @@ namespace Assets.Scripts.World
 
                     DestroyNotMappedWorldObjects();
 
-                    Player = response.Player;
                     GameInfoController.UpdateData(Player);
 
-                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                    if (Player.IsMoving)
-                        MovePlayer = new MovePlayer(new Vector3(Player.X, Player.Y), new Vector3(Player.MoveToX, Player.MoveToY));
-                    else
-                        MovePlayer = null;
+                    
                 }
             }
             catch (Exception e)
@@ -228,6 +232,21 @@ namespace Assets.Scripts.World
 
         private void MapPayer(Player player, bool newWorld = false)
         {
+            if (newWorld)
+            {
+                Player = player;
+            }
+            else
+            {
+                Player.IsMoving = player.IsMoving;
+                Player.MoveToX = player.MoveToX;
+                Player.MoveToY = player.MoveToY;
+                Player.X = player.X;
+                Player.Y = player.Y;
+                Player.VisibleCitys = player.VisibleCitys.ToArray();
+                Player.World = player.World;
+            }
+
             if (!AllObjects.TryGetValue(player.Guid, out var item))
             {
                 WriteLog($"Creating new player with guid='{player.Guid}'");
@@ -242,20 +261,28 @@ namespace Assets.Scripts.World
                 PlayerController = item.Controller as PlayerController;
             }
 
-            if (newWorld)
-            {
-                WriteLog($"UpdateFromServer player='{player.Guid}'");
-                // ReSharper disable once PossibleNullReferenceException
-                (item.Controller as PlayerController).UpdateFromServer(player);
-            }
-            else
-            {
-                Player.IsMoving = player.IsMoving;
-                Player.MoveToX = player.MoveToX;
-                Player.MoveToY = player.MoveToY;
-                Player.VisibleCitys = player.VisibleCitys.ToArray();
-                Player.Bramins = player.Bramins;
-            }
+            PlayerController?.UpdateFromServer(Player); 
+
+            //// ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+            //if (Player.IsMoving)
+            //    MovePlayer = new MovePlayer(new Vector3(Player.X, Player.Y), new Vector3(Player.MoveToX, Player.MoveToY));
+            //else
+            //    MovePlayer = null;
+
+            //if (newWorld)
+            //{
+            //    WriteLog($"UpdateFromServer player='{player.Guid}'");
+            //    // ReSharper disable once PossibleNullReferenceException
+            //    (item.Controller as PlayerController).UpdateFromServer(player);
+            //}
+            //else
+            //{
+            //    Player.IsMoving = player.IsMoving;
+            //    Player.MoveToX = player.MoveToX;
+            //    Player.MoveToY = player.MoveToY;
+            //    Player.VisibleCitys = player.VisibleCitys.ToArray();
+            //    Player.Bramins = player.Bramins;
+            //}
 
 
             item.Updated = true;
