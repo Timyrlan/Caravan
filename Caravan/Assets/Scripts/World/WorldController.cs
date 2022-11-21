@@ -8,7 +8,6 @@ using CrvService.Contracts.Entities;
 using CrvService.Contracts.Entities.Commands.ClientCommands;
 using CrvService.Contracts.Entities.Commands.ClientCommands.Base;
 using CrvService.Contracts.Entities.Commands.ServerCommands;
-using CrvService.Contracts.Entities.Commands.ServerCommands.Base;
 using Newtonsoft.Json;
 using TMPro;
 using UnityEngine;
@@ -33,12 +32,6 @@ namespace Assets.Scripts.World
 
         private MovePlayer MovePlayer { get; set; }
 
-        private CaravanServerHttpConnector CaravanServerHttpConnector { get; set; }
-
-        private Player Player { get; set; }
-
-        private List<ClientCommand> ClientCommands { get; set; } = new();
-        private List<ServerCommand> ServerCommands { get; } = new();
 
         private int LastProcessedCommand { get; set; } = -1;
 
@@ -60,7 +53,7 @@ namespace Assets.Scripts.World
             if (PlayerPrefs.GetInt("SceneReloading", 0) == 1)
             {
                 PlayerPrefs.SetInt("SceneReloading", 0);
-                CaravanServerHttpConnector ??= new CaravanServerHttpConnector();
+                S.CaravanServerHttpConnector ??= new CaravanServerHttpConnector();
 
                 Log = new List<string>();
 
@@ -76,37 +69,42 @@ namespace Assets.Scripts.World
 
         private void Update()
         {
-            if (CaravanServerHttpConnector != null && Player != null)
+            if (S.CaravanServerHttpConnector != null && S.Player != null)
                 try
                 {
-                    if (!WaitingServerResponse && (LastPingDateTimeUtc.AddMilliseconds(PingPeriodMillisecond) < DateTime.UtcNow || ClientCommands.Any()))
+                    if (!WaitingServerResponse && (LastPingDateTimeUtc.AddMilliseconds(PingPeriodMillisecond) < DateTime.UtcNow || S.ClientCommands.Any()))
                     {
                         WaitingServerResponse = true;
 
                         var request = new PingRequest
                         {
-                            Player = ToServerMapper.Map(Player),
-                            ClientCommands = ClientCommands.ToArray()
+                            Player = ToServerMapper.Map(S.Player),
+                            ClientCommands = S.ClientCommands.ToArray()
                         };
 
-                        StartCoroutine(CaravanServerHttpConnector.ProcessWorld(request, ProcessServerResponse));
+                        StartCoroutine(S.CaravanServerHttpConnector.ProcessWorld(request, ProcessServerResponse));
                         LastPingDateTimeUtc = DateTime.UtcNow;
                     }
 
-                    ProcessMovePlayer();
+                    DisabledGameObject.gameObject.SetActive(S.SceneLoaded == SceneLoaded.World);
 
-                    ProcessServerCommand();
+                    if (S.SceneLoaded == SceneLoaded.World)
+                    {
+                        ProcessMovePlayer();
+                        ProcessServerCommand();
+                    }
+                    
                 }
                 catch (Exception e)
                 {
-                    CaravanServerHttpConnector = null;
+                    S.CaravanServerHttpConnector = null;
                     Debug.LogError($"Error while WorldController.Update(): {e}");
                 }
         }
 
         private void ProcessServerCommand()
         {
-            var command = ServerCommands.OrderBy(c => c.Id).FirstOrDefault();
+            var command = S.ServerCommands.OrderBy(c => c.Id).FirstOrDefault();
             if (command == null) return;
 
             switch (command)
@@ -120,12 +118,16 @@ namespace Assets.Scripts.World
             }
 
             LastProcessedCommand = command.Id;
-            ServerCommands.Remove(command);
+            S.ServerCommands.Remove(command);
         }
 
         private void ProcessEnterCityServerCommand(EnterCityServerCommand enterCityServerCommand)
         {
             Debug.Log($"Enter city {enterCityServerCommand.Guid}");
+
+            // ReSharper disable once PossibleInvalidOperationException
+            S.EnterCityGuid = enterCityServerCommand.City.Guid;
+            SceneManager.LoadScene("CityScene", LoadSceneMode.Additive);
         }
 
         /// <summary>
@@ -147,7 +149,7 @@ namespace Assets.Scripts.World
         public void OnContinueGameButton()
         {
             if (SettingsDialogController.Settings.PlayerGuid == null) return;
-            if (CaravanServerHttpConnector == null) CaravanServerHttpConnector = new CaravanServerHttpConnector();
+            if (S.CaravanServerHttpConnector == null) S.CaravanServerHttpConnector = new CaravanServerHttpConnector();
 
             Log = new List<string>();
 
@@ -182,18 +184,18 @@ namespace Assets.Scripts.World
             };
 
 
-            yield return CaravanServerHttpConnector.GetNewWorld(request, ProcessServerResponse);
+            yield return S.CaravanServerHttpConnector.GetNewWorld(request, ProcessServerResponse);
         }
 
         private void RemoveSendedCommands(ClientCommand[] commands)
         {
             var commandsGuids = commands.Select(c => c.Guid).ToArray();
             var resultCommands = new List<ClientCommand>();
-            foreach (var clientCommand in ClientCommands)
+            foreach (var clientCommand in S.ClientCommands)
                 if (!commandsGuids.Contains(clientCommand.Guid))
                     resultCommands.Add(clientCommand);
 
-            ClientCommands = resultCommands;
+            S.ClientCommands = resultCommands;
         }
 
 
@@ -216,7 +218,7 @@ namespace Assets.Scripts.World
 
                     DestroyNotMappedWorldObjects();
 
-                    GameInfoController.UpdateData(Player);
+                    GameInfoController.UpdateData(S.Player);
 
 
                     MapCommands(response.Player);
@@ -237,7 +239,7 @@ namespace Assets.Scripts.World
 
                 if (response != null)
                 {
-                    ClientCommands = new List<ClientCommand>();
+                    S.ClientCommands = new List<ClientCommand>();
 
                     foreach (var obj in AllObjects) obj.Value.Updated = false;
 
@@ -248,7 +250,7 @@ namespace Assets.Scripts.World
 
                     MapCommands(response.Player);
 
-                    GameInfoController.UpdateData(Player);
+                    GameInfoController.UpdateData(S.Player);
                 }
             }
             catch (Exception e)
@@ -260,29 +262,25 @@ namespace Assets.Scripts.World
         private void MapCommands(Player player)
         {
             foreach (var command in player.ServerCommands)
-                if (command.Id > LastProcessedCommand && ServerCommands.All(c => c.Id != command.Id))
-                    ServerCommands.Add(command);
-        }
-
-        private void ProcessServerCommands()
-        {
+                if (command.Id > LastProcessedCommand && S.ServerCommands.All(c => c.Id != command.Id))
+                    S.ServerCommands.Add(command);
         }
 
         private void MapPayer(Player player, bool newWorld = false)
         {
             if (newWorld)
             {
-                Player = player;
+                S.Player = player;
             }
             else
             {
-                Player.IsMoving = player.IsMoving;
-                Player.MoveToX = player.MoveToX;
-                Player.MoveToY = player.MoveToY;
-                Player.X = player.X;
-                Player.Y = player.Y;
-                Player.VisibleCitys = player.VisibleCitys.ToArray();
-                Player.World = player.World;
+                S.Player.IsMoving = player.IsMoving;
+                S.Player.MoveToX = player.MoveToX;
+                S.Player.MoveToY = player.MoveToY;
+                S.Player.X = player.X;
+                S.Player.Y = player.Y;
+                S.Player.VisibleCitys = player.VisibleCitys.ToArray();
+                S.Player.World = player.World;
             }
 
             if (!AllObjects.TryGetValue(player.Guid, out var item))
@@ -299,13 +297,10 @@ namespace Assets.Scripts.World
                 PlayerController = item.Controller as PlayerController;
             }
 
-            PlayerController?.UpdateFromServer(Player);
+            PlayerController?.UpdateFromServer(S.Player);
 
-            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-            if (Player.IsMoving)
-                MovePlayer = new MovePlayer(new Vector3(Player.X, Player.Y), new Vector3(Player.MoveToX, Player.MoveToY));
-            else
-                MovePlayer = null;
+            
+            MovePlayer = S.Player.IsMoving ? new MovePlayer(new Vector3(S.Player.X, S.Player.Y), new Vector3(S.Player.MoveToX, S.Player.MoveToY)) : null;
 
             item.Updated = true;
         }
@@ -316,12 +311,12 @@ namespace Assets.Scripts.World
             {
                 item = new AllObjectsDictionaryItem { ItemFromServer = city };
                 AllObjects.Add(city.Guid, item);
-                item.Controller = Instantiate(CityControllerBase, new Vector3(city.X, city.Y, 0), Quaternion.identity);
+                item.Controller = Instantiate(CityControllerBase, new Vector3(city.X, city.Y, 0), Quaternion.identity, DisabledGameObject.transform);
             }
 
-            // ReSharper disable once PossibleNullReferenceException
-            (item.Controller as CityController).UpdateFromServer(city, player);
+            (item.Controller as CityController)?.UpdateFromServer(city, player);
             item.Updated = true;
+            
         }
 
         private void DestroyNotMappedWorldObjects()
@@ -344,135 +339,17 @@ namespace Assets.Scripts.World
                     }
         }
 
-
-        //private void UpdateVisibleCities()
-        //{
-        //    foreach (var city in Cities.Where(c => !c.Visible))
-        //        if (Mathf.Abs(city.X - PlayerController.transform.position.x) < 1 + city.Size / 2 && Mathf.Abs(city.Y - PlayerController.transform.position.y) < 1 + city.Size / 2)
-        //        {
-        //            city.SetVisible();
-        //            WriteLog($"You find city {city.Name}");
-        //        }
-        //}
-
-        //private void InitializePlayer()
-        //{
-        //    Player = new Player();
-        //    var firstCity = Cities[0];
-        //    PlayerController = Instantiate(PlayerControllerBase, new Vector3(firstCity.X, firstCity.Y, 0), Quaternion.identity);
-        //    PlayerController.CityEntered = firstCity;
-
-        //    WriteSystemLog($"Created Player in {firstCity.Name} with X={firstCity.X} and Y={firstCity.Y}");
-
-        //    PlayerController.InitializePlayer();
-
-
-        //    //Player.Bramins = new List<Bramin> {new Bramin(), new Bramin(), new Bramin()};
-        //}
-
         public void WorldClick()
         {
-            var moveTo = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            ClientCommands.Add(new MovePlayerClientCommand
+            if (S.SceneLoaded == SceneLoaded.World)
             {
-                ToX = moveTo.x,
-                ToY = moveTo.y
-            });
-        }
-
-
-        //private void Update()
-        //{
-        //    //if (GameStatus.Paused) return;
-
-        //    try
-        //    {
-        //        if (MovePlayer != null)
-        //        {
-        //            var distance = Vector3.Distance(MovePlayer.MoveTo, PlayerController.transform.position);
-        //            if (distance > CoordinateAccuracy)
-        //            {
-        //                var targetPosition = MovePlayer.GetPlayerTargetPosition(PlayerController.transform.position, Time.deltaTime);
-        //                //WriteSystemLog($"Move player to: {targetPosition}, distance: {distance}");
-        //                PlayerController.transform.position = targetPosition;
-
-        //                var city = FindCurrentCity();
-        //                if (city == null && PlayerController.CityEntered != null) LeaveCity(PlayerController.CityEntered);
-
-        //                UpdateVisibleCities();
-        //            }
-        //            else
-        //            {
-        //                var city = FindCurrentCity();
-        //                if (city != null && PlayerController.CityEntered == null) EnterCity(city);
-        //            }
-        //        }
-
-        //        ProcessWorld();
-        //        UpdateHeader();
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Debug.LogError($"Error while WorldController.Update(): {e}");
-        //    }
-        //}
-
-        //public void ProcessWorld()
-        //{
-        //    var now = DateTime.UtcNow;
-
-        //    if (LastWorldProcessedDateTime < DateTime.UtcNow.AddSeconds(-1))
-        //    {
-        //        LastWorldProcessedDateTime = now;
-
-        //        ProcessWorldIteration++;
-
-        //        WriteSystemLog($"Process world iteration={ProcessWorldIteration}");
-
-        //        foreach (var city in Cities) city.Process();
-
-        //        Player.Process();
-        //    }
-        //}
-
-        //private void LeaveCity(CityController city)
-        //{
-        //    PlayerController.CityEntered = null;
-
-        //    WriteLog($"You leave {city.City.Name}");
-        //}
-
-        //private void EnterCity(CityController city)
-        //{
-        //    WriteLog($"You enter {city.City.Name}");
-
-        //    PlayerController.CityEntered = city;
-
-        //    EnterCityMenuDialog.ShowDialog(city);
-
-        //    //var getTokens = 0;
-        //    //foreach (var playerBramin in Player.Bramins)
-        //    //{
-        //    //    getTokens += playerBramin.Bag.Weight;
-        //    //    playerBramin.Bag.Weight = 0;
-        //    //}
-
-        //    //Player.Tokens += getTokens;
-        //    //WriteLog($"You get {getTokens} tokens");
-        //}
-
-        //private CityController FindCurrentCity()
-        //{
-        //    foreach (var city in Cities)
-        //        if (Mathf.Abs(city.X - PlayerController.transform.position.x) < city.Size / 2 && Mathf.Abs(city.Y - PlayerController.transform.position.y) < city.Size / 2)
-        //            return city;
-
-        //    return null;
-        //}
-
-        public void UpdateHeader()
-        {
-            //Header.text = $"TOKENS: {Player.Tokens}  BRAMINS: {Player.Bramins.Count}  WEIGHT:  {Player.BraminWeightSumm}";
+                var moveTo = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                S.ClientCommands.Add(new MovePlayerClientCommand
+                {
+                    ToX = moveTo.x,
+                    ToY = moveTo.y
+                });
+            }
         }
 
         private void WriteUserLog(string message)
@@ -515,6 +392,7 @@ namespace Assets.Scripts.World
         [SerializeField] private PlayerController PlayerControllerBase;
 
         [SerializeField] private GameInfoController GameInfoController;
+        [SerializeField] private GameObject DisabledGameObject;
 
         #endregion
 
